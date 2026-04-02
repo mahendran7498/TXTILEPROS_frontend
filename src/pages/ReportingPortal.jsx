@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import Footer from '../components/Footer'
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
-const MEDIA_ORIGIN = (import.meta.env.VITE_MEDIA_URL || API_URL.replace(/\/api$/, '')).replace(/\/$/, '')
 const TOKEN_KEY = 'employee-reporting-token'
 
 const emptyReportForm = {
@@ -108,6 +107,10 @@ function normalizeReportPhotos(photos = []) {
 
     return { ...photo, displayKind: index === 0 ? 'before' : 'after' }
   })
+}
+
+function getPhotoSrc(photo) {
+  return photo?.dataUrl || photo?.url || ''
 }
 
 function StatCard({ label, value, hint }) {
@@ -287,10 +290,10 @@ function ReportList({ reports, showEmployee, title }) {
 
               {report.photos?.length ? (
                 <div className="report-photos">
-                  {normalizeReportPhotos(report.photos).map((photo) => (
-                    <a href={`${MEDIA_ORIGIN}${photo.url}`} key={photo.url} rel="noreferrer" target="_blank">
+                  {normalizeReportPhotos(report.photos).map((photo, index) => (
+                    <a href={getPhotoSrc(photo)} key={photo.dataUrl || photo.url || index} rel="noreferrer" target="_blank">
                       <span className="photo-label">{photo.displayKind === 'before' ? 'Before work' : 'After work'}</span>
-                      <img alt={photo.originalName} src={`${MEDIA_ORIGIN}${photo.url}`} />
+                      <img alt={photo.originalName} src={getPhotoSrc(photo)} />
                     </a>
                   ))}
                 </div>
@@ -613,10 +616,10 @@ function ReportDetailsView({ report }) {
             </div>
           </div>
           <div className="report-photos">
-            {normalizeReportPhotos(report.photos).map((photo) => (
-              <a href={`${MEDIA_ORIGIN}${photo.url}`} key={photo.url} rel="noreferrer" target="_blank">
+            {normalizeReportPhotos(report.photos).map((photo, index) => (
+              <a href={getPhotoSrc(photo)} key={photo.dataUrl || photo.url || index} rel="noreferrer" target="_blank">
                 <span className="photo-label">{photo.displayKind === 'before' ? 'Before work' : 'After work'}</span>
-                <img alt={photo.originalName} src={`${MEDIA_ORIGIN}${photo.url}`} />
+                <img alt={photo.originalName} src={getPhotoSrc(photo)} />
               </a>
             ))}
           </div>
