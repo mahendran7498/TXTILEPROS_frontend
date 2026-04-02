@@ -4,6 +4,8 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaPaperPlane, FaWhatsapp 
 import toast from 'react-hot-toast'
 import axios from 'axios'
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
+
 export default function Contact() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', subject: '', message: '' })
   const [loading, setLoading] = useState(false)
@@ -14,7 +16,7 @@ export default function Contact() {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.post('/api/contact', form)
+      await axios.post(`${API_URL}/contact`, form)
       toast.success('Message sent! We\'ll respond within 24 hours.')
       setForm({ name: '', phone: '', email: '', subject: '', message: '' })
     } catch {

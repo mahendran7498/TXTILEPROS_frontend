@@ -3,7 +3,7 @@ import { Toaster, toast } from 'react-hot-toast'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import Footer from '../components/Footer'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
 const MEDIA_ORIGIN = (import.meta.env.VITE_MEDIA_URL || API_URL.replace(/\/api$/, '')).replace(/\/$/, '')
 const TOKEN_KEY = 'employee-reporting-token'
 
