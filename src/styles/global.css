@@ -400,6 +400,30 @@ a {
   flex-wrap: wrap;
 }
 
+.admin-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 340px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(40, 56, 44, 0.06);
+}
+
+.admin-toolbar-compact {
+  min-width: 320px;
+}
+
+.admin-toolbar-meta {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .admin-dual-grid,
 .admin-detail-grid {
   display: grid;
@@ -417,6 +441,37 @@ a {
 
 .admin-table-card {
   padding-top: 8px;
+}
+
+.admin-search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.admin-control-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-search-field input,
+.admin-month-field input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.82);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  height: 40px;
+}
+
+.admin-month-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
 }
 
 .admin-table-wrap {
@@ -481,22 +536,47 @@ a {
   margin-bottom: 16px;
 }
 
-.attendance-day-grid {
+.attendance-weekday-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.attendance-weekday-cell {
+  padding: 8px 10px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.attendance-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
 }
 
+.attendance-day-placeholder {
+  min-height: 82px;
+}
+
 .attendance-day-card {
-  padding: 12px 14px;
-  border-radius: 16px;
+  min-height: 82px;
+  padding: 10px 12px;
+  border-radius: 14px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.55);
 }
 
 .attendance-day-card strong {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
 }
 
 .employee-dashboard-grid {
@@ -654,6 +734,14 @@ a {
   .employee-dashboard-grid {
     grid-template-columns: 1fr;
   }
+
+  .attendance-month-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .attendance-weekday-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -678,6 +766,12 @@ a {
     align-items: flex-start;
   }
 
+  .admin-toolbar,
+  .admin-toolbar-compact {
+    width: 100%;
+    min-width: 100%;
+  }
+
   .employee-section-intro {
     flex-direction: column;
     align-items: flex-start;
@@ -690,6 +784,27 @@ a {
 
   .admin-nav-link {
     width: 100%;
+  }
+
+  .admin-search-field {
+    width: 100%;
+  }
+
+  .admin-month-field {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .admin-toolbar-meta {
+    align-items: stretch;
+  }
+
+  .attendance-month-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .attendance-weekday-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .header-actions { width: 100%; }

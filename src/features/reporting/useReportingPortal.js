@@ -5,6 +5,10 @@ import { apiRequest } from './api'
 import { emptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
 import { getWeekStartValue } from './utils'
 
+function getMonthValue(date = new Date()) {
+  return new Date(date).toISOString().slice(0, 7)
+}
+
 export default function useReportingPortal() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -13,6 +17,7 @@ export default function useReportingPortal() {
   const [user, setUser] = useState(null)
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [weekStart, setWeekStart] = useState(getWeekStartValue())
+  const [attendanceMonth, setAttendanceMonth] = useState(getMonthValue())
   const [reports, setReports] = useState([])
   const [summary, setSummary] = useState({})
   const [dashboard, setDashboard] = useState({})
@@ -77,7 +82,7 @@ export default function useReportingPortal() {
           apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
           apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
           apiRequest('/admin/users', {}, token),
-          apiRequest(`/admin/attendance?weekStart=${weekStart}`, {}, token),
+          apiRequest(`/admin/attendance?month=${attendanceMonth}`, {}, token),
         ])
 
         setDashboard(dashboardData.dashboard || {})
@@ -104,7 +109,7 @@ export default function useReportingPortal() {
     if (user) {
       refreshDashboard()
     }
-  }, [user, weekStart])
+  }, [attendanceMonth, user, weekStart])
 
   async function handleLogin(event) {
     event.preventDefault()
@@ -187,6 +192,7 @@ export default function useReportingPortal() {
   return {
     adminSectionPath: reportId ? '/dashboard/admin/reports' : location.pathname,
     attendance,
+    attendanceMonth,
     authLoading,
     credentials,
     dashboard,
@@ -205,6 +211,7 @@ export default function useReportingPortal() {
     selectedReport: reports.find((report) => report._id === reportId),
     setCredentials,
     setForm,
+    setAttendanceMonth,
     setUserForm,
     setWeekStart,
     submitting,

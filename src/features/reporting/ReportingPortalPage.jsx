@@ -10,6 +10,7 @@ export default function ReportingPortalPage() {
   const {
     adminSectionPath,
     attendance,
+    attendanceMonth,
     authLoading,
     credentials,
     dashboard,
@@ -27,6 +28,7 @@ export default function ReportingPortalPage() {
     reports,
     selectedReport,
     setCredentials,
+    setAttendanceMonth,
     setForm,
     setUserForm,
     setWeekStart,
@@ -69,6 +71,7 @@ export default function ReportingPortalPage() {
             <AdminDashboard
               activePath={adminSectionPath}
               attendance={attendance}
+              attendanceMonth={attendanceMonth}
               dashboard={dashboard}
               handleUserSubmit={handleUserSubmit}
               handleUserToggle={handleUserToggle}
@@ -76,6 +79,7 @@ export default function ReportingPortalPage() {
               reportId={reportId}
               reports={reports}
               selectedReport={selectedReport}
+              setAttendanceMonth={setAttendanceMonth}
               setUserForm={setUserForm}
               userForm={userForm}
               userSaving={userSaving}
