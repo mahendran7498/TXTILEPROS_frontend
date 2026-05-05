@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 import AdminSectionIntro from './AdminSectionIntro'
 
 function formatLeaveRange(leave) {
@@ -40,11 +41,15 @@ function LeaveActionForm({ leave, loading, onDecision }) {
 
 export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDecision }) {
   const [statusFilter, setStatusFilter] = useState('all')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const filteredLeaves = useMemo(() => {
     if (statusFilter === 'all') return leaves
     return leaves.filter((leave) => leave.status === statusFilter)
   }, [leaves, statusFilter])
+  const totalPages = Math.max(1, Math.ceil(filteredLeaves.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const paginatedLeaves = filteredLeaves.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE)
 
   const pendingCount = leaves.filter((leave) => leave.status === 'pending').length
 
@@ -67,7 +72,13 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
           <div className="admin-toolbar admin-toolbar-compact">
             <label className="admin-search-field">
               <span className="admin-control-label">Filter status</span>
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <select
+                value={statusFilter}
+                onChange={(event) => {
+                  setStatusFilter(event.target.value)
+                  setCurrentPage(1)
+                }}
+              >
                 <option value="all">All requests</option>
                 <option value="pending">Pending</option>
                 <option value="approved">Approved</option>
@@ -84,7 +95,7 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
           <div className="empty-state">No leave requests found for this filter.</div>
         ) : (
           <div className="leave-admin-list">
-            {filteredLeaves.map((leave) => {
+            {paginatedLeaves.map((leave) => {
               const isLoading = leaveActionLoadingId === leave._id
 
               return (
@@ -121,6 +132,12 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
             })}
           </div>
         )}
+        <AdminPagination
+          currentPage={safeCurrentPage}
+          itemLabel="leave requests"
+          onPageChange={setCurrentPage}
+          totalItems={filteredLeaves.length}
+        />
       </section>
     </>
   )

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
 export default function AdminReportsSection({ reports, title = 'All employee submissions', subtitle = 'Review weekly work reports and open any report for full details.' }) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const normalizedSearch = searchTerm.trim().toLowerCase()
   const filteredReports = normalizedSearch
     ? reports.filter((report) => {
@@ -11,6 +13,9 @@ export default function AdminReportsSection({ reports, title = 'All employee sub
         return employeeName.includes(normalizedSearch) || employeeCode.includes(normalizedSearch)
       })
     : reports
+  const totalPages = Math.max(1, Math.ceil(filteredReports.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const paginatedReports = filteredReports.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE)
 
   return (
     <>
@@ -28,7 +33,10 @@ export default function AdminReportsSection({ reports, title = 'All employee sub
                 placeholder="Search by employee name or code"
                 type="search"
                 value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
+                onChange={(event) => {
+                  setSearchTerm(event.target.value)
+                  setCurrentPage(1)
+                }}
               />
             </label>
             <div className="admin-toolbar-meta">
@@ -57,7 +65,7 @@ export default function AdminReportsSection({ reports, title = 'All employee sub
                 </tr>
               </thead>
               <tbody>
-                {filteredReports.map((report) => (
+                {paginatedReports.map((report) => (
                   <tr key={report._id}>
                     <td>
                       <strong>{new Date(report.workDate).toLocaleDateString()}</strong>
@@ -83,6 +91,12 @@ export default function AdminReportsSection({ reports, title = 'All employee sub
               </tbody>
             </table>
           </div>
+          <AdminPagination
+            currentPage={safeCurrentPage}
+            itemLabel="reports"
+            onPageChange={setCurrentPage}
+            totalItems={filteredReports.length}
+          />
         </section>
       )}
     </>

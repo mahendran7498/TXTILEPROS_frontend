@@ -1,6 +1,13 @@
+import { useState } from 'react'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 import AdminSectionIntro from './AdminSectionIntro'
 
 export default function AdminEmployeesSection({ users, form, setForm, saving, onSubmit, onToggle }) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(users.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const paginatedUsers = users.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE)
+
   return (
     <>
       <AdminSectionIntro
@@ -57,7 +64,7 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {paginatedUsers.map((user) => (
                   <tr key={user.id || user._id}>
                     <td><strong>{user.name}</strong><div className="muted">{user.email}</div></td>
                     <td><span className="status-pill status-completed">{user.role}</span></td>
@@ -70,6 +77,12 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
               </tbody>
             </table>
           </div>
+          <AdminPagination
+            currentPage={safeCurrentPage}
+            itemLabel="employees"
+            onPageChange={setCurrentPage}
+            totalItems={users.length}
+          />
         </section>
       </div>
     </>

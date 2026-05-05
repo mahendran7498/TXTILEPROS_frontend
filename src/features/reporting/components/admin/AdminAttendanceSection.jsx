@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 import AdminSectionIntro from './AdminSectionIntro'
 
 const ATTENDANCE_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -54,6 +55,7 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
   const employees = Array.isArray(attendance?.employees) ? attendance.employees : []
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const normalizedSearch = searchTerm.trim().toLowerCase()
   const filteredEmployees = normalizedSearch
     ? employees.filter((employee) => {
@@ -62,6 +64,9 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
         return name.includes(normalizedSearch) || employeeCode.includes(normalizedSearch)
       })
     : employees
+  const totalPages = Math.max(1, Math.ceil(filteredEmployees.length / PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const paginatedEmployees = filteredEmployees.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE)
 
   return (
     <>
@@ -70,18 +75,30 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
           <div className="admin-toolbar">
             <label className="admin-search-field" aria-label="Search employee">
               <span className="admin-control-label">Search employee</span>
-              <input
-                placeholder="Search by name or employee code"
-                type="search"
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-              />
-            </label>
+                <input
+                  placeholder="Search by name or employee code"
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => {
+                    setSearchTerm(event.target.value)
+                    setCurrentPage(1)
+                    setSelectedEmployeeId('')
+                  }}
+                />
+              </label>
             <div className="admin-toolbar-meta">
               <span className="status-pill status-completed">{attendance.totalDays || 0} days</span>
               <label className="admin-month-field" aria-label="Select attendance month">
                 <span className="admin-control-label">Month</span>
-                <input type="month" value={attendanceMonth} onChange={(event) => setAttendanceMonth(event.target.value)} />
+                <input
+                  type="month"
+                  value={attendanceMonth}
+                  onChange={(event) => {
+                    setAttendanceMonth(event.target.value)
+                    setCurrentPage(1)
+                    setSelectedEmployeeId('')
+                  }}
+                />
               </label>
             </div>
           </div>
@@ -108,7 +125,7 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                 </tr>
               </thead>
               <tbody>
-                {filteredEmployees.map((employee) => {
+                {paginatedEmployees.map((employee) => {
                   const isOpen = selectedEmployeeId === employee.id
 
                   return (
@@ -141,6 +158,12 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
               </tbody>
             </table>
           </div>
+          <AdminPagination
+            currentPage={safeCurrentPage}
+            itemLabel="employees"
+            onPageChange={setCurrentPage}
+            totalItems={filteredEmployees.length}
+          />
         </section>
       )}
     </>
