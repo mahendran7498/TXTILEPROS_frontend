@@ -1,6 +1,17 @@
 import { useMemo, useState } from 'react'
 import AdminSectionIntro from './AdminSectionIntro'
 
+function formatLeaveRange(leave) {
+  const startValue = leave.fromDate || leave.leaveDate
+  const endValue = leave.toDate || leave.leaveDate || leave.fromDate
+
+  if (!startValue) return 'Date not available'
+
+  const start = new Date(startValue).toLocaleDateString()
+  const end = endValue ? new Date(endValue).toLocaleDateString() : start
+  return start === end ? start : `${start} - ${end}`
+}
+
 function LeaveActionForm({ leave, loading, onDecision }) {
   const [comment, setComment] = useState(leave.adminComment || '')
 
@@ -89,7 +100,7 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
                   </div>
 
                   <div className="leave-admin-meta">
-                    <span><strong>Leave date:</strong> {new Date(leave.leaveDate).toLocaleDateString()}</span>
+                    <span><strong>Leave dates:</strong> {formatLeaveRange(leave)}</span>
                     <span><strong>Applied:</strong> {new Date(leave.createdAt).toLocaleDateString()}</span>
                   </div>
 

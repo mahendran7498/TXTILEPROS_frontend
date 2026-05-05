@@ -28,6 +28,7 @@ export const emptyUserForm = {
 }
 
 export const emptyLeaveForm = {
-  leaveDate: new Date().toISOString().slice(0, 10),
+  fromDate: new Date().toISOString().slice(0, 10),
+  toDate: new Date().toISOString().slice(0, 10),
   reason: '',
 }

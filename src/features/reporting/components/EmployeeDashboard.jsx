@@ -16,6 +16,17 @@ function EmployeeSectionIntro({ eyebrow, title, description, aside }) {
   )
 }
 
+function formatLeaveRange(leave) {
+  const startValue = leave.fromDate || leave.leaveDate
+  const endValue = leave.toDate || leave.leaveDate || leave.fromDate
+
+  if (!startValue) return 'Date not available'
+
+  const start = new Date(startValue).toLocaleDateString()
+  const end = endValue ? new Date(endValue).toLocaleDateString() : start
+  return start === end ? start : `${start} - ${end}`
+}
+
 function ReportList({ reports, showEmployee, title }) {
   return (
     <section className="glass-card section-card employee-panel">
@@ -200,8 +211,12 @@ function LeaveForm({ leaveForm, setLeaveForm, leaveSubmitting, onSubmit }) {
 
       <form className="report-grid employee-form-grid" onSubmit={onSubmit}>
         <label className="field">
-          <span>Leave date</span>
-          <input required type="date" value={leaveForm.leaveDate} onChange={(event) => setLeaveForm((current) => ({ ...current, leaveDate: event.target.value }))} />
+          <span>From date</span>
+          <input required type="date" value={leaveForm.fromDate} onChange={(event) => setLeaveForm((current) => ({ ...current, fromDate: event.target.value }))} />
+        </label>
+        <label className="field">
+          <span>To date</span>
+          <input required type="date" min={leaveForm.fromDate} value={leaveForm.toDate} onChange={(event) => setLeaveForm((current) => ({ ...current, toDate: event.target.value }))} />
         </label>
         <label className="field field-wide">
           <span>Reason</span>
@@ -243,7 +258,7 @@ function LeaveList({ leaves }) {
             <article className="leave-card" key={leave._id}>
               <div className="report-topline">
                 <div>
-                  <h4>{new Date(leave.leaveDate).toLocaleDateString()}</h4>
+                  <h4>{formatLeaveRange(leave)}</h4>
                   <p className="muted">Applied on {new Date(leave.createdAt).toLocaleDateString()}</p>
                 </div>
                 <span className={`status-pill status-${leave.status}`}>{leave.status}</span>
