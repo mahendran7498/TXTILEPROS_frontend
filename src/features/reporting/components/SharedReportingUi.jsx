@@ -73,6 +73,7 @@ export function AdminNavigation({ activePath }) {
   const items = [
     { label: 'Overview', path: '/dashboard/admin' },
     { label: 'Attendance', path: '/dashboard/admin/attendance' },
+    { label: 'Leaves', path: '/dashboard/admin/leaves' },
     { label: 'Reports', path: '/dashboard/admin/reports' },
     { label: 'Employees', path: '/dashboard/admin/employees' },
   ]

@@ -16,6 +16,8 @@ export default function AdminOverviewSection({ dashboard, reports }) {
         <StatCard label="Reports submitted" value={dashboard.totalReports || 0} hint={`${dashboard.todaySubmissions || 0} added today`} />
         <StatCard label="Hours reported" value={dashboard.totalHours || 0} hint={`${dashboard.photoCount || 0} photo uploads`} />
         <StatCard label="Needs action" value={dashboard.attentionNeeded || 0} hint={`${dashboard.syncFailures || 0} Sheets sync failures`} />
+        <StatCard label="Pending leaves" value={dashboard.pendingLeaves || 0} hint={`${dashboard.approvedLeaves || 0} approved overall`} />
+        <StatCard label="Rejected leaves" value={dashboard.rejectedLeaves || 0} hint="Closed without approval" />
       </section>
       <AdminReportsSection
         reports={reports.slice(0, 6)}

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { apiRequest } from './api'
-import { emptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
+import { emptyLeaveForm, emptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
 import { getWeekStartValue } from './utils'
 
 function getMonthValue(date = new Date()) {
@@ -19,15 +19,19 @@ export default function useReportingPortal() {
   const [weekStart, setWeekStart] = useState(getWeekStartValue())
   const [attendanceMonth, setAttendanceMonth] = useState(getMonthValue())
   const [reports, setReports] = useState([])
+  const [leaves, setLeaves] = useState([])
   const [summary, setSummary] = useState({})
   const [dashboard, setDashboard] = useState({})
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
   const [users, setUsers] = useState([])
   const [form, setForm] = useState(emptyReportForm)
+  const [leaveForm, setLeaveForm] = useState(emptyLeaveForm)
   const [userForm, setUserForm] = useState(emptyUserForm)
   const [authLoading, setAuthLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(Boolean(token))
   const [submitting, setSubmitting] = useState(false)
+  const [leaveSubmitting, setLeaveSubmitting] = useState(false)
+  const [leaveActionLoadingId, setLeaveActionLoadingId] = useState('')
   const [userSaving, setUserSaving] = useState(false)
 
   const pageTitle = user?.role === 'admin' ? 'Admin Operations Hub' : 'Field Reporting Workspace'
@@ -78,27 +82,31 @@ export default function useReportingPortal() {
 
     try {
       if (user.role === 'admin') {
-        const [dashboardData, reportsData, usersData, attendanceData] = await Promise.all([
+        const [dashboardData, reportsData, usersData, attendanceData, leavesData] = await Promise.all([
           apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
           apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
           apiRequest('/admin/users', {}, token),
           apiRequest(`/admin/attendance?month=${attendanceMonth}`, {}, token),
+          apiRequest('/admin/leaves', {}, token),
         ])
 
         setDashboard(dashboardData.dashboard || {})
         setReports(reportsData.reports || [])
         setUsers(usersData.users || [])
         setAttendance(attendanceData.attendance || { daily: [], employees: [] })
+        setLeaves(leavesData.leaves || [])
         return
       }
 
-      const [summaryData, reportsData] = await Promise.all([
+      const [summaryData, reportsData, leavesData] = await Promise.all([
         apiRequest(`/reports/weekly-summary?weekStart=${weekStart}`, {}, token),
         apiRequest(`/reports/mine?weekStart=${weekStart}`, {}, token),
+        apiRequest('/leaves/mine', {}, token),
       ])
 
       setSummary(summaryData.summary || {})
       setReports(reportsData.reports || [])
+      setLeaves(leavesData.leaves || [])
       setAttendance({ daily: [], employees: [] })
     } catch (error) {
       toast.error(error.message)
@@ -167,6 +175,36 @@ export default function useReportingPortal() {
     }
   }
 
+  async function handleLeaveSubmit(event) {
+    event.preventDefault()
+    setLeaveSubmitting(true)
+
+    try {
+      await apiRequest('/leaves', { method: 'POST', body: leaveForm }, token)
+      setLeaveForm(emptyLeaveForm)
+      toast.success('Leave request submitted')
+      await refreshDashboard()
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLeaveSubmitting(false)
+    }
+  }
+
+  async function handleLeaveDecision(leaveId, status, adminComment = '') {
+    setLeaveActionLoadingId(leaveId)
+
+    try {
+      await apiRequest(`/admin/leaves/${leaveId}`, { method: 'PATCH', body: { status, adminComment } }, token)
+      toast.success(`Leave request ${status}`)
+      await refreshDashboard()
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setLeaveActionLoadingId('')
+    }
+  }
+
   async function handleUserToggle(targetUser) {
     try {
       await apiRequest(`/admin/users/${targetUser.id || targetUser._id}`, { method: 'PATCH', body: { active: !targetUser.active } }, token)
@@ -182,6 +220,7 @@ export default function useReportingPortal() {
     setToken('')
     setUser(null)
     setReports([])
+    setLeaves([])
     setUsers([])
     setSummary({})
     setDashboard({})
@@ -197,12 +236,18 @@ export default function useReportingPortal() {
     credentials,
     dashboard,
     form,
+    handleLeaveDecision,
     handleLogin,
     handleLogout,
+    handleLeaveSubmit,
     handleReportSubmit,
     handleUserSubmit,
     handleUserToggle,
     isAuthenticated: Boolean(token && user),
+    leaveActionLoadingId,
+    leaveForm,
+    leaveSubmitting,
+    leaves,
     locationPath: location.pathname,
     pageLoading,
     refreshDashboard,
@@ -212,6 +257,7 @@ export default function useReportingPortal() {
     setCredentials,
     setForm,
     setAttendanceMonth,
+    setLeaveForm,
     setUserForm,
     setWeekStart,
     submitting,

@@ -26,3 +26,8 @@ export const emptyUserForm = {
   employeeCode: '',
   department: 'Service',
 }
+
+export const emptyLeaveForm = {
+  leaveDate: new Date().toISOString().slice(0, 10),
+  reason: '',
+}

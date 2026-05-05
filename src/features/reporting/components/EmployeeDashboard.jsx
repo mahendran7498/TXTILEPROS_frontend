@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { getPhotoSrc, normalizeReportPhotos, readSingleFile } from '../utils'
 import { ReportPhotoGrid, StatCard } from './SharedReportingUi'
@@ -186,14 +187,111 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
   )
 }
 
-export default function EmployeeDashboard({ summary, reports, form, setForm, submitting, onSubmit }) {
+function LeaveForm({ leaveForm, setLeaveForm, leaveSubmitting, onSubmit }) {
+  return (
+    <section className="glass-card section-card employee-panel">
+      <div className="section-head employee-section-head">
+        <div>
+          <div className="eyebrow">Leave request</div>
+          <h3>Apply for leave</h3>
+          <p className="muted">Choose the leave date and explain the reason so admin can review it quickly.</p>
+        </div>
+      </div>
+
+      <form className="report-grid employee-form-grid" onSubmit={onSubmit}>
+        <label className="field">
+          <span>Leave date</span>
+          <input required type="date" value={leaveForm.leaveDate} onChange={(event) => setLeaveForm((current) => ({ ...current, leaveDate: event.target.value }))} />
+        </label>
+        <label className="field field-wide">
+          <span>Reason</span>
+          <textarea
+            required
+            rows="5"
+            value={leaveForm.reason}
+            onChange={(event) => setLeaveForm((current) => ({ ...current, reason: event.target.value }))}
+            placeholder="Explain why you need leave"
+          />
+        </label>
+        <button className="primary-button field-wide" disabled={leaveSubmitting} type="submit">
+          {leaveSubmitting ? 'Submitting leave...' : 'Submit leave request'}
+        </button>
+      </form>
+    </section>
+  )
+}
+
+function LeaveList({ leaves }) {
+  return (
+    <section className="glass-card section-card employee-panel">
+      <div className="section-head employee-section-head">
+        <div>
+          <div className="eyebrow">Leave tracker</div>
+          <h3>Your leave requests</h3>
+          <p className="muted">Track whether admin has approved, rejected, or is still reviewing your request.</p>
+        </div>
+        <div className="employee-inline-metrics">
+          <span className="status-pill status-completed">{leaves.length} requests</span>
+        </div>
+      </div>
+
+      {leaves.length === 0 ? (
+        <div className="empty-state">No leave requests submitted yet.</div>
+      ) : (
+        <div className="leave-list">
+          {leaves.map((leave) => (
+            <article className="leave-card" key={leave._id}>
+              <div className="report-topline">
+                <div>
+                  <h4>{new Date(leave.leaveDate).toLocaleDateString()}</h4>
+                  <p className="muted">Applied on {new Date(leave.createdAt).toLocaleDateString()}</p>
+                </div>
+                <span className={`status-pill status-${leave.status}`}>{leave.status}</span>
+              </div>
+              <p><strong>Reason:</strong> {leave.reason}</p>
+              {leave.adminComment ? <p><strong>Admin note:</strong> {leave.adminComment}</p> : null}
+              {leave.reviewedAt ? (
+                <div className="report-footer">
+                  <span>Reviewed by {leave.reviewedBy?.name || 'Admin'}</span>
+                  <span>{new Date(leave.reviewedAt).toLocaleDateString()}</span>
+                </div>
+              ) : (
+                <div className="report-footer">
+                  <span>Waiting for admin decision</span>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+export default function EmployeeDashboard({
+  summary,
+  reports,
+  leaves,
+  form,
+  leaveForm,
+  setForm,
+  setLeaveForm,
+  submitting,
+  leaveSubmitting,
+  onSubmit,
+  onLeaveSubmit,
+}) {
+  const [activeSection, setActiveSection] = useState('reports')
   const attendance = summary.attendance || {}
+  const pendingLeaves = leaves.filter((leave) => leave.status === 'pending').length
+  const approvedLeaves = leaves.filter((leave) => leave.status === 'approved').length
+  const rejectedLeaves = leaves.filter((leave) => leave.status === 'rejected').length
 
   return (
     <>
       <EmployeeSectionIntro
         aside={<span className="status-pill status-completed">{attendance.todayStatus === 'present' ? 'Present today' : 'Awaiting report today'}</span>}
-        description="Submit field activity, track your weekly work log, and keep photo-backed service updates in one place."
+        description="Submit field activity, apply for leave, and track both your work updates and admin decisions in one place."
         eyebrow="Workspace"
         title="Your reporting dashboard"
       />
@@ -202,11 +300,42 @@ export default function EmployeeDashboard({ summary, reports, form, setForm, sub
         <StatCard label="Hours logged" value={summary.totalHours || 0} hint="Total service effort recorded" />
         <StatCard label="Present days" value={attendance.presentDays || 0} hint={`${attendance.todayStatus === 'present' ? 'Present' : 'Absent'} today`} />
         <StatCard label="Absent days" value={attendance.absentDays || 0} hint={`${summary.attentionNeeded || 0} blocked or support-needed jobs`} />
+        <StatCard label="Pending leaves" value={pendingLeaves} hint={`${approvedLeaves} approved requests`} />
+        <StatCard label="Rejected leaves" value={rejectedLeaves} hint="Requests not approved yet" />
       </section>
-      <div className="employee-dashboard-grid">
-        <ReportForm form={form} setForm={setForm} submitting={submitting} onSubmit={onSubmit} />
-        <ReportList reports={reports} showEmployee={false} title="Your weekly reports" />
-      </div>
+
+      <nav className="glass-card section-card employee-subnav-shell">
+        <div className="employee-subnav-list">
+          <button
+            className={`employee-subnav-link${activeSection === 'reports' ? ' active' : ''}`}
+            onClick={() => setActiveSection('reports')}
+            type="button"
+          >
+            Reports
+          </button>
+          <button
+            className={`employee-subnav-link${activeSection === 'leave' ? ' active' : ''}`}
+            onClick={() => setActiveSection('leave')}
+            type="button"
+          >
+            Leave
+          </button>
+        </div>
+      </nav>
+
+      {activeSection === 'reports' ? (
+        <div className="employee-dashboard-grid">
+          <ReportForm form={form} setForm={setForm} submitting={submitting} onSubmit={onSubmit} />
+          <ReportList reports={reports} showEmployee={false} title="Your weekly reports" />
+        </div>
+      ) : null}
+
+      {activeSection === 'leave' ? (
+        <div className="employee-dashboard-grid">
+          <LeaveForm leaveForm={leaveForm} leaveSubmitting={leaveSubmitting} onSubmit={onLeaveSubmit} setLeaveForm={setLeaveForm} />
+          <LeaveList leaves={leaves} />
+        </div>
+      ) : null}
     </>
   )
 }

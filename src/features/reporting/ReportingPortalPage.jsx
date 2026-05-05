@@ -15,12 +15,18 @@ export default function ReportingPortalPage() {
     credentials,
     dashboard,
     form,
+    handleLeaveDecision,
     handleLogin,
     handleLogout,
+    handleLeaveSubmit,
     handleReportSubmit,
     handleUserSubmit,
     handleUserToggle,
     isAuthenticated,
+    leaveActionLoadingId,
+    leaveForm,
+    leaveSubmitting,
+    leaves,
     locationPath,
     pageLoading,
     refreshDashboard,
@@ -30,6 +36,7 @@ export default function ReportingPortalPage() {
     setCredentials,
     setAttendanceMonth,
     setForm,
+    setLeaveForm,
     setUserForm,
     setWeekStart,
     submitting,
@@ -73,8 +80,11 @@ export default function ReportingPortalPage() {
               attendance={attendance}
               attendanceMonth={attendanceMonth}
               dashboard={dashboard}
+              handleLeaveDecision={handleLeaveDecision}
               handleUserSubmit={handleUserSubmit}
               handleUserToggle={handleUserToggle}
+              leaveActionLoadingId={leaveActionLoadingId}
+              leaves={leaves}
               locationPath={locationPath}
               reportId={reportId}
               reports={reports}
@@ -86,7 +96,19 @@ export default function ReportingPortalPage() {
               users={users}
             />
           ) : (
-            <EmployeeDashboard form={form} onSubmit={handleReportSubmit} reports={reports} setForm={setForm} submitting={submitting} summary={summary} />
+            <EmployeeDashboard
+              form={form}
+              leaveForm={leaveForm}
+              leaveSubmitting={leaveSubmitting}
+              leaves={leaves}
+              onLeaveSubmit={handleLeaveSubmit}
+              onSubmit={handleReportSubmit}
+              reports={reports}
+              setForm={setForm}
+              setLeaveForm={setLeaveForm}
+              submitting={submitting}
+              summary={summary}
+            />
           )}
         </section>
       </main>
