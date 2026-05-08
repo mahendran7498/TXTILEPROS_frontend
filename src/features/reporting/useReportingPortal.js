@@ -24,6 +24,7 @@ export default function useReportingPortal() {
   const [dashboard, setDashboard] = useState({})
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
   const [users, setUsers] = useState([])
+  const [selectedReport, setSelectedReport] = useState(null)
   const [form, setForm] = useState(emptyReportForm)
   const [leaveForm, setLeaveForm] = useState(emptyLeaveForm)
   const [userForm, setUserForm] = useState(emptyUserForm)
@@ -118,6 +119,25 @@ export default function useReportingPortal() {
       refreshDashboard()
     }
   }, [attendanceMonth, user, weekStart])
+
+  useEffect(() => {
+    async function loadSelectedReport() {
+      if (!token || user?.role !== 'admin' || !reportId) {
+        setSelectedReport(null)
+        return
+      }
+
+      try {
+        const data = await apiRequest(`/admin/reports/${reportId}`, {}, token)
+        setSelectedReport(data.report || null)
+      } catch (error) {
+        setSelectedReport(null)
+        toast.error(error.message)
+      }
+    }
+
+    loadSelectedReport()
+  }, [reportId, token, user])
 
   async function handleLogin(event) {
     event.preventDefault()
@@ -225,6 +245,7 @@ export default function useReportingPortal() {
     setSummary({})
     setDashboard({})
     setAttendance({ daily: [], employees: [] })
+    setSelectedReport(null)
     navigate('/login', { replace: true })
   }
 
@@ -253,7 +274,7 @@ export default function useReportingPortal() {
     refreshDashboard,
     reportId,
     reports,
-    selectedReport: reports.find((report) => report._id === reportId),
+    selectedReport,
     setCredentials,
     setForm,
     setAttendanceMonth,
