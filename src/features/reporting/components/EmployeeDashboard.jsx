@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { MAX_REPORT_PHOTO_SIZE_BYTES } from '../constants'
 import { getPhotoSrc, normalizeReportPhotos, readSingleFile } from '../utils'
 import { ReportPhotoGrid, StatCard } from './SharedReportingUi'
+
+const REPORT_PHOTO_LIMIT_MB = Math.floor(MAX_REPORT_PHOTO_SIZE_BYTES / (1024 * 1024))
 
 function EmployeeSectionIntro({ eyebrow, title, description, aside }) {
   return (
@@ -171,12 +174,12 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
         <label className="field">
           <span>Before work photo</span>
           <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleFileChange(event, 'before')} />
-          <small>Upload the machine/site condition before starting work.</small>
+          <small>Upload the machine/site condition before starting work. Max {REPORT_PHOTO_LIMIT_MB}MB.</small>
         </label>
         <label className="field">
           <span>After work photo</span>
           <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleFileChange(event, 'after')} />
-          <small>Upload the final condition after the job is finished.</small>
+          <small>Upload the final condition after the job is finished. Max {REPORT_PHOTO_LIMIT_MB}MB.</small>
         </label>
 
         <div className="field-wide photo-preview-grid">

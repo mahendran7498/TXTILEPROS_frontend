@@ -1,3 +1,5 @@
+import { MAX_REPORT_PHOTO_SIZE_BYTES } from './constants'
+
 export function getWeekStartValue(date = new Date()) {
   const value = new Date(date)
   value.setHours(0, 0, 0, 0)
@@ -14,6 +16,11 @@ export function readFiles(files) {
       .map(
         (file) =>
           new Promise((resolve, reject) => {
+            if (file.size > MAX_REPORT_PHOTO_SIZE_BYTES) {
+              reject(new Error('Each report photo must be 4MB or smaller.'))
+              return
+            }
+
             const reader = new FileReader()
             reader.onload = () => resolve({ name: file.name, size: file.size, type: file.type, dataUrl: reader.result })
             reader.onerror = () => reject(new Error(`Unable to read ${file.name}`))

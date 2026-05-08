@@ -1,5 +1,6 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
 export const TOKEN_KEY = 'employee-reporting-token'
+export const MAX_REPORT_PHOTO_SIZE_BYTES = 4 * 1024 * 1024
 
 export const emptyReportForm = {
   workDate: new Date().toISOString().slice(0, 10),
