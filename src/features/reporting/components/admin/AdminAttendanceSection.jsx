@@ -5,8 +5,8 @@ import AdminSectionIntro from './AdminSectionIntro'
 const ATTENDANCE_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 function AttendanceDetails({ employee, monthLabel, totalDays }) {
-  const firstDate = employee.attendance[0]?.date ? new Date(employee.attendance[0].date) : null
-  const weekdayOffset = firstDate ? ((firstDate.getDay() + 6) % 7) : 0
+  const firstDate = employee.attendance[0]?.date ? new Date(employee.attendance[0].date + 'T00:00:00Z') : null
+  const weekdayOffset = firstDate ? ((firstDate.getUTCDay() + 6) % 7) : 0
   const leadingPlaceholders = Array.from({ length: weekdayOffset }, (_, index) => `placeholder-${index}`)
 
   return (
@@ -22,6 +22,8 @@ function AttendanceDetails({ employee, monthLabel, totalDays }) {
 
       <div className="attendance-summary-badges">
         <span className="status-pill status-completed">Present: {employee.presentDays}</span>
+        <span className="status-pill status-leave">Leave: {employee.leaveDays || 0}</span>
+        <span className="status-pill status-holiday">Holiday: {employee.holidayDays || 0}</span>
         <span className="status-pill status-blocked">Absent: {employee.absentDays}</span>
         <span className="status-pill">{totalDays || employee.attendance.length} total days</span>
       </div>
@@ -41,7 +43,7 @@ function AttendanceDetails({ employee, monthLabel, totalDays }) {
         {employee.attendance.map((day) => (
           <div className="attendance-day-card" key={`${employee.id}-${day.date}`}>
             <strong>{day.label}</strong>
-            <span className={`status-pill status-${day.status === 'present' ? 'completed' : 'blocked'}`}>
+            <span className={`status-pill status-${day.status === 'present' ? 'completed' : day.status === 'leave' ? 'leave' : day.status === 'holiday' ? 'holiday' : 'blocked'}`}>
               {day.status}
             </span>
           </div>
@@ -121,6 +123,8 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                   <th>Employee</th>
                   <th>Department</th>
                   <th>Present Days</th>
+                  <th>Leave Days</th>
+                  <th>Holiday Days</th>
                   <th>Absent Days</th>
                 </tr>
               </thead>
@@ -143,11 +147,13 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                         </td>
                         <td><span className="table-soft-text">{employee.department || '-'}</span></td>
                         <td><span className="status-pill status-completed">{employee.presentDays}</span></td>
+                        <td><span className="status-pill status-leave">{employee.leaveDays || 0}</span></td>
+                        <td><span className="status-pill status-holiday">{employee.holidayDays || 0}</span></td>
                         <td><span className="status-pill status-blocked">{employee.absentDays}</span></td>
                       </tr>
                       {isOpen ? (
                         <tr className="attendance-expanded-row">
-                          <td colSpan="4">
+                          <td colSpan="6">
                             <AttendanceDetails employee={employee} monthLabel={attendance.monthLabel} totalDays={attendance.totalDays} />
                           </td>
                         </tr>
