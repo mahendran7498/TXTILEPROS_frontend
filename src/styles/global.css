@@ -605,11 +605,17 @@ a {
   margin-bottom: 16px;
 }
 
+.attendance-calendar-shell {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
 .attendance-weekday-row {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 10px;
+  min-width: 700px;
 }
 
 .attendance-weekday-cell {
@@ -628,6 +634,7 @@ a {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 10px;
+  min-width: 700px;
 }
 
 .attendance-day-placeholder {
@@ -863,13 +870,6 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .attendance-month-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .attendance-weekday-row {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 760px) {
@@ -942,12 +942,9 @@ a {
     align-items: flex-start;
   }
 
+  .attendance-weekday-row,
   .attendance-month-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .attendance-weekday-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 620px;
   }
 
   .header-actions { width: 100%; }

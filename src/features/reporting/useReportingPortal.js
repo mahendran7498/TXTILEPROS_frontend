@@ -2,12 +2,8 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { apiRequest } from './api'
-import { emptyLeaveForm, emptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
-import { getWeekStartValue } from './utils'
-
-function getMonthValue(date = new Date()) {
-  return new Date(date).toISOString().slice(0, 7)
-}
+import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
+import { getLocalMonthInputValue, getWeekStartValue } from './utils'
 
 export default function useReportingPortal() {
   const navigate = useNavigate()
@@ -17,7 +13,7 @@ export default function useReportingPortal() {
   const [user, setUser] = useState(null)
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [weekStart, setWeekStart] = useState(getWeekStartValue())
-  const [attendanceMonth, setAttendanceMonth] = useState(getMonthValue())
+  const [attendanceMonth, setAttendanceMonth] = useState(getLocalMonthInputValue())
   const [reports, setReports] = useState([])
   const [leaves, setLeaves] = useState([])
   const [summary, setSummary] = useState({})
@@ -25,8 +21,8 @@ export default function useReportingPortal() {
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
   const [users, setUsers] = useState([])
   const [selectedReport, setSelectedReport] = useState(null)
-  const [form, setForm] = useState(emptyReportForm)
-  const [leaveForm, setLeaveForm] = useState(emptyLeaveForm)
+  const [form, setForm] = useState(() => createEmptyReportForm())
+  const [leaveForm, setLeaveForm] = useState(() => createEmptyLeaveForm())
   const [userForm, setUserForm] = useState(emptyUserForm)
   const [authLoading, setAuthLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(Boolean(token))
@@ -169,7 +165,7 @@ export default function useReportingPortal() {
       }
 
       await apiRequest('/reports', { method: 'POST', body: { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) } }, token)
-      setForm({ ...emptyReportForm, workDate: new Date().toISOString().slice(0, 10) })
+      setForm(createEmptyReportForm())
       toast.success('Work report saved')
       await refreshDashboard()
     } catch (error) {
@@ -201,7 +197,7 @@ export default function useReportingPortal() {
 
     try {
       await apiRequest('/leaves', { method: 'POST', body: leaveForm }, token)
-      setLeaveForm(emptyLeaveForm)
+      setLeaveForm(createEmptyLeaveForm())
       toast.success('Leave request submitted')
       await refreshDashboard()
     } catch (error) {

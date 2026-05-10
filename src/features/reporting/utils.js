@@ -1,12 +1,26 @@
 import { MAX_REPORT_PHOTO_SIZE_BYTES } from './constants'
 
+function padDatePart(value) {
+  return String(value).padStart(2, '0')
+}
+
+export function getLocalDateInputValue(date = new Date()) {
+  const value = new Date(date)
+  return `${value.getFullYear()}-${padDatePart(value.getMonth() + 1)}-${padDatePart(value.getDate())}`
+}
+
+export function getLocalMonthInputValue(date = new Date()) {
+  const value = new Date(date)
+  return `${value.getFullYear()}-${padDatePart(value.getMonth() + 1)}`
+}
+
 export function getWeekStartValue(date = new Date()) {
   const value = new Date(date)
   value.setHours(0, 0, 0, 0)
   const day = value.getDay()
   const diff = day === 0 ? -6 : 1 - day
   value.setDate(value.getDate() + diff)
-  return value.toISOString().slice(0, 10)
+  return getLocalDateInputValue(value)
 }
 
 export function readFiles(files) {

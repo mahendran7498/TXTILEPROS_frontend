@@ -4,9 +4,21 @@ import AdminSectionIntro from './AdminSectionIntro'
 
 const ATTENDANCE_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-function AttendanceDetails({ employee, monthLabel, totalDays }) {
-  const firstDate = employee.attendance[0]?.date ? new Date(employee.attendance[0].date + 'T00:00:00Z') : null
-  const weekdayOffset = firstDate ? ((firstDate.getUTCDay() + 6) % 7) : 0
+function getMonthStartDate(attendanceMonth, employee) {
+  if (attendanceMonth) {
+    return new Date(`${attendanceMonth}-01T00:00:00`)
+  }
+
+  if (employee.attendance[0]?.date) {
+    return new Date(`${employee.attendance[0].date}T00:00:00`)
+  }
+
+  return null
+}
+
+function AttendanceDetails({ attendanceMonth, employee, monthLabel, totalDays }) {
+  const firstDate = getMonthStartDate(attendanceMonth, employee)
+  const weekdayOffset = firstDate ? ((firstDate.getDay() + 6) % 7) : 0
   const leadingPlaceholders = Array.from({ length: weekdayOffset }, (_, index) => `placeholder-${index}`)
 
   return (
@@ -28,26 +40,28 @@ function AttendanceDetails({ employee, monthLabel, totalDays }) {
         <span className="status-pill">{totalDays || employee.attendance.length} total days</span>
       </div>
 
-      <div className="attendance-weekday-row">
-        {ATTENDANCE_WEEKDAYS.map((day) => (
-          <div className="attendance-weekday-cell" key={day}>
-            {day}
-          </div>
-        ))}
-      </div>
+      <div className="attendance-calendar-shell">
+        <div className="attendance-weekday-row">
+          {ATTENDANCE_WEEKDAYS.map((day) => (
+            <div className="attendance-weekday-cell" key={day}>
+              {day}
+            </div>
+          ))}
+        </div>
 
-      <div className="attendance-month-grid">
-        {leadingPlaceholders.map((placeholder) => (
-          <div aria-hidden="true" className="attendance-day-placeholder" key={placeholder} />
-        ))}
-        {employee.attendance.map((day) => (
-          <div className="attendance-day-card" key={`${employee.id}-${day.date}`}>
-            <strong>{day.label}</strong>
-            <span className={`status-pill status-${day.status === 'present' ? 'completed' : day.status === 'leave' ? 'leave' : day.status === 'holiday' ? 'holiday' : 'blocked'}`}>
-              {day.status}
-            </span>
-          </div>
-        ))}
+        <div className="attendance-month-grid">
+          {leadingPlaceholders.map((placeholder) => (
+            <div aria-hidden="true" className="attendance-day-placeholder" key={placeholder} />
+          ))}
+          {employee.attendance.map((day) => (
+            <div className="attendance-day-card" key={`${employee.id}-${day.date}`}>
+              <strong>{day.label}</strong>
+              <span className={`status-pill status-${day.status === 'present' ? 'completed' : day.status === 'leave' ? 'leave' : day.status === 'holiday' ? 'holiday' : 'blocked'}`}>
+                {day.status}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -154,7 +168,12 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                       {isOpen ? (
                         <tr className="attendance-expanded-row">
                           <td colSpan="6">
-                            <AttendanceDetails employee={employee} monthLabel={attendance.monthLabel} totalDays={attendance.totalDays} />
+                            <AttendanceDetails
+                              attendanceMonth={attendanceMonth}
+                              employee={employee}
+                              monthLabel={attendance.monthLabel}
+                              totalDays={attendance.totalDays}
+                            />
                           </td>
                         </tr>
                       ) : null}

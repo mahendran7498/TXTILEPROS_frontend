@@ -1,23 +1,29 @@
+import { getLocalDateInputValue } from './utils'
+
 export const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
 export const TOKEN_KEY = 'employee-reporting-token'
 export const MAX_REPORT_PHOTO_SIZE_BYTES = 4 * 1024 * 1024
 
-export const emptyReportForm = {
-  workDate: new Date().toISOString().slice(0, 10),
-  siteName: '',
-  clientName: '',
-  machineName: '',
-  shift: 'General',
-  hoursWorked: '8',
-  workSummary: '',
-  problemsObserved: '',
-  materialsUsed: '',
-  status: 'completed',
-  photos: {
-    before: null,
-    after: null,
-  },
+export function createEmptyReportForm() {
+  return {
+    workDate: getLocalDateInputValue(),
+    siteName: '',
+    clientName: '',
+    machineName: '',
+    shift: 'General',
+    hoursWorked: '8',
+    workSummary: '',
+    problemsObserved: '',
+    materialsUsed: '',
+    status: 'completed',
+    photos: {
+      before: null,
+      after: null,
+    },
+  }
 }
+
+export const emptyReportForm = createEmptyReportForm()
 
 export const emptyUserForm = {
   name: '',
@@ -28,8 +34,14 @@ export const emptyUserForm = {
   department: 'Service',
 }
 
-export const emptyLeaveForm = {
-  fromDate: new Date().toISOString().slice(0, 10),
-  toDate: new Date().toISOString().slice(0, 10),
-  reason: '',
+export function createEmptyLeaveForm() {
+  const today = getLocalDateInputValue()
+
+  return {
+    fromDate: today,
+    toDate: today,
+    reason: '',
+  }
 }
+
+export const emptyLeaveForm = createEmptyLeaveForm()
