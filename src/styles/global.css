@@ -605,6 +605,12 @@ a {
   margin-bottom: 16px;
 }
 
+.attendance-holiday-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .attendance-calendar-shell {
   overflow-x: auto;
   padding-bottom: 4px;
@@ -653,6 +659,13 @@ a {
   display: block;
   margin-bottom: 8px;
   font-size: 0.92rem;
+}
+
+.attendance-day-note {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.4;
 }
 
 .employee-dashboard-grid {
@@ -767,6 +780,7 @@ a {
 .status-needs-support { color: #9b5f10; background: rgba(214, 106, 42, 0.16); }
 .status-blocked { color: var(--danger); background: rgba(163, 57, 57, 0.14); }
 .status-leave { color: #0d7ea2; background: rgba(13, 126, 162, 0.12); }
+.status-comp-off { color: #135a96; background: rgba(19, 90, 150, 0.14); }
 .status-holiday { color: #7b2cbf; background: rgba(123, 44, 191, 0.12); }
 
 .report-photos,

@@ -57,7 +57,7 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
     <>
       <AdminSectionIntro
         aside={<span className="status-pill status-needs-support">{pendingCount} pending requests</span>}
-        description="Review leave applications from employees, approve or reject them, and keep the final decision visible in the employee dashboard."
+        description="Review leave applications from employees, approve or reject them, and track the 15-day yearly paid leave balance before confirming approval."
         eyebrow="Leave control"
         title="Manage leave requests"
       />
@@ -113,6 +113,8 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
                   <div className="leave-admin-meta">
                     <span><strong>Leave dates:</strong> {formatLeaveRange(leave)}</span>
                     <span><strong>Applied:</strong> {new Date(leave.createdAt).toLocaleDateString()}</span>
+                    <span><strong>Working paid days:</strong> {leave.requestedPaidLeaveDays || 0}</span>
+                    <span><strong>Remaining paid leaves:</strong> {leave.remainingPaidLeaves ?? leave.paidLeaveLimit ?? 15}</span>
                   </div>
 
                   <p><strong>Reason:</strong> {leave.reason}</p>
@@ -124,6 +126,12 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
                       <p className="muted">
                         Reviewed by {leave.reviewedBy?.name || 'Admin'} on {leave.reviewedAt ? new Date(leave.reviewedAt).toLocaleDateString() : 'N/A'}
                       </p>
+                      {leave.status === 'approved' ? (
+                        <p><strong>Paid leave counted:</strong> {leave.paidLeaveDays || 0} of {leave.paidLeaveLimit || 15}</p>
+                      ) : null}
+                      {leave.status === 'approved' ? (
+                        <p><strong>Remaining paid leaves:</strong> {leave.remainingPaidLeaves ?? 0}</p>
+                      ) : null}
                       {leave.adminComment ? <p><strong>Admin note:</strong> {leave.adminComment}</p> : null}
                     </div>
                   )}

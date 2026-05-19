@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { MAX_REPORT_PHOTO_SIZE_BYTES } from '../constants'
+import { getLocalDateInputValue } from '../utils'
 import { getPhotoSrc, normalizeReportPhotos, readSingleFile } from '../utils'
 import { ReportPhotoGrid, StatCard } from './SharedReportingUi'
 
@@ -202,24 +203,26 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
 }
 
 function LeaveForm({ leaveForm, setLeaveForm, leaveSubmitting, onSubmit }) {
+  const minLeaveDate = getLocalDateInputValue()
+
   return (
     <section className="glass-card section-card employee-panel">
       <div className="section-head employee-section-head">
         <div>
           <div className="eyebrow">Leave request</div>
           <h3>Apply for leave</h3>
-          <p className="muted">Choose the leave date and explain the reason so admin can review it quickly.</p>
+          <p className="muted">Choose your leave dates in advance. Approved working-day leave is counted against the 15 paid leave days available each year.</p>
         </div>
       </div>
 
       <form className="report-grid employee-form-grid" onSubmit={onSubmit}>
         <label className="field">
           <span>From date</span>
-          <input required type="date" value={leaveForm.fromDate} onChange={(event) => setLeaveForm((current) => ({ ...current, fromDate: event.target.value }))} />
+          <input required min={minLeaveDate} type="date" value={leaveForm.fromDate} onChange={(event) => setLeaveForm((current) => ({ ...current, fromDate: event.target.value }))} />
         </label>
         <label className="field">
           <span>To date</span>
-          <input required type="date" min={leaveForm.fromDate} value={leaveForm.toDate} onChange={(event) => setLeaveForm((current) => ({ ...current, toDate: event.target.value }))} />
+          <input required type="date" min={leaveForm.fromDate || minLeaveDate} value={leaveForm.toDate} onChange={(event) => setLeaveForm((current) => ({ ...current, toDate: event.target.value }))} />
         </label>
         <label className="field field-wide">
           <span>Reason</span>
@@ -267,6 +270,8 @@ function LeaveList({ leaves }) {
                 <span className={`status-pill status-${leave.status}`}>{leave.status}</span>
               </div>
               <p><strong>Reason:</strong> {leave.reason}</p>
+              {leave.status === 'approved' ? <p><strong>Paid leave counted:</strong> {leave.paidLeaveDays || 0} day(s)</p> : null}
+              {leave.status === 'approved' ? <p><strong>Remaining paid leaves:</strong> {leave.remainingPaidLeaves ?? 0}</p> : null}
               {leave.adminComment ? <p><strong>Admin note:</strong> {leave.adminComment}</p> : null}
               {leave.reviewedAt ? (
                 <div className="report-footer">
@@ -304,11 +309,18 @@ export default function EmployeeDashboard({
   const pendingLeaves = leaves.filter((leave) => leave.status === 'pending').length
   const approvedLeaves = leaves.filter((leave) => leave.status === 'approved').length
   const rejectedLeaves = leaves.filter((leave) => leave.status === 'rejected').length
+  const todayAttendanceLabel = attendance.todayStatus === 'holiday'
+    ? 'Holiday today'
+    : attendance.todayStatus === 'comp-off'
+      ? 'Comp-off today'
+    : attendance.todayStatus === 'present'
+      ? 'Present today'
+      : 'Awaiting report today'
 
   return (
     <>
       <EmployeeSectionIntro
-        aside={<span className="status-pill status-completed">{attendance.todayStatus === 'present' ? 'Present today' : 'Awaiting report today'}</span>}
+        aside={<span className="status-pill status-completed">{todayAttendanceLabel}</span>}
         description="Submit field activity, apply for leave, and track both your work updates and admin decisions in one place."
         eyebrow="Workspace"
         title="Your reporting dashboard"
@@ -316,7 +328,7 @@ export default function EmployeeDashboard({
       <section className="stat-grid">
         <StatCard label="Reports this week" value={summary.totalReports || 0} hint="Daily submissions captured" />
         <StatCard label="Hours logged" value={summary.totalHours || 0} hint="Total service effort recorded" />
-        <StatCard label="Present days" value={attendance.presentDays || 0} hint={`${attendance.todayStatus === 'present' ? 'Present' : 'Absent'} today`} />
+        <StatCard label="Present days" value={attendance.presentDays || 0} hint={todayAttendanceLabel} />
         <StatCard label="Absent days" value={attendance.absentDays || 0} hint={`${summary.attentionNeeded || 0} blocked or support-needed jobs`} />
         <StatCard label="Pending leaves" value={pendingLeaves} hint={`${approvedLeaves} approved requests`} />
         <StatCard label="Rejected leaves" value={rejectedLeaves} hint="Requests not approved yet" />

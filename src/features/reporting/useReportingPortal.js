@@ -21,6 +21,7 @@ export default function useReportingPortal() {
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
   const [users, setUsers] = useState([])
   const [selectedReport, setSelectedReport] = useState(null)
+  const [selectedReportLoading, setSelectedReportLoading] = useState(false)
   const [form, setForm] = useState(() => createEmptyReportForm())
   const [leaveForm, setLeaveForm] = useState(() => createEmptyLeaveForm())
   const [userForm, setUserForm] = useState(emptyUserForm)
@@ -79,6 +80,49 @@ export default function useReportingPortal() {
 
     try {
       if (user.role === 'admin') {
+        if (location.pathname === '/dashboard/admin') {
+          const [dashboardData, reportsData] = await Promise.all([
+            apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
+            apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
+          ])
+
+          setDashboard(dashboardData.dashboard || {})
+          setReports(reportsData.reports || [])
+          return
+        }
+
+        if (location.pathname === '/dashboard/admin/attendance') {
+          const attendanceData = await apiRequest(`/admin/attendance?month=${attendanceMonth}`, {}, token)
+          setAttendance(attendanceData.attendance || { daily: [], employees: [] })
+          return
+        }
+
+        if (location.pathname === '/dashboard/admin/leaves') {
+          const leavesData = await apiRequest('/admin/leaves', {}, token)
+          setLeaves(leavesData.leaves || [])
+          return
+        }
+
+        if (location.pathname === '/dashboard/admin/reports') {
+          const reportsData = await apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token)
+          setReports(reportsData.reports || [])
+          return
+        }
+
+        if (location.pathname.startsWith('/dashboard/admin/reports/')) {
+          if (!reports.length) {
+            const reportsData = await apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token)
+            setReports(reportsData.reports || [])
+          }
+          return
+        }
+
+        if (location.pathname === '/dashboard/admin/employees') {
+          const usersData = await apiRequest('/admin/users', {}, token)
+          setUsers(usersData.users || [])
+          return
+        }
+
         const [dashboardData, reportsData, usersData, attendanceData, leavesData] = await Promise.all([
           apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
           apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
@@ -114,26 +158,39 @@ export default function useReportingPortal() {
     if (user) {
       refreshDashboard()
     }
-  }, [attendanceMonth, user, weekStart])
+  }, [attendanceMonth, location.pathname, user, weekStart])
 
   useEffect(() => {
     async function loadSelectedReport() {
       if (!token || user?.role !== 'admin' || !reportId) {
         setSelectedReport(null)
+        setSelectedReportLoading(false)
         return
       }
 
+      const cachedReport = reports.find((report) => String(report._id) === String(reportId)) || null
+      if (cachedReport) {
+        setSelectedReport((current) => current || cachedReport)
+      } else {
+        setSelectedReport(null)
+      }
+
+      setSelectedReportLoading(true)
       try {
-        const data = await apiRequest(`/admin/reports/${reportId}`, {}, token)
+        const data = await apiRequest(`/admin/reports/${reportId}`, { timeoutMs: 15000 }, token)
         setSelectedReport(data.report || null)
       } catch (error) {
-        setSelectedReport(null)
+        if (!cachedReport) {
+          setSelectedReport(null)
+        }
         toast.error(error.message)
+      } finally {
+        setSelectedReportLoading(false)
       }
     }
 
     loadSelectedReport()
-  }, [reportId, token, user])
+  }, [reportId, reports, token, user])
 
   async function handleLogin(event) {
     event.preventDefault()
@@ -271,6 +328,7 @@ export default function useReportingPortal() {
     reportId,
     reports,
     selectedReport,
+    selectedReportLoading,
     setCredentials,
     setForm,
     setAttendanceMonth,

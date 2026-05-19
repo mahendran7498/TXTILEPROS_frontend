@@ -33,6 +33,7 @@ export default function ReportingPortalPage() {
     reportId,
     reports,
     selectedReport,
+    selectedReportLoading,
     setCredentials,
     setAttendanceMonth,
     setForm,
@@ -89,6 +90,7 @@ export default function ReportingPortalPage() {
               reportId={reportId}
               reports={reports}
               selectedReport={selectedReport}
+              selectedReportLoading={selectedReportLoading}
               setAttendanceMonth={setAttendanceMonth}
               setUserForm={setUserForm}
               userForm={userForm}

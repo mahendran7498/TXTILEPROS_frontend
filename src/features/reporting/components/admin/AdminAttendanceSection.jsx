@@ -4,6 +4,21 @@ import AdminSectionIntro from './AdminSectionIntro'
 
 const ATTENDANCE_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+function getAttendanceStatusClass(status) {
+  if (status === 'present') return 'completed'
+  if (status === 'leave') return 'leave'
+  if (status === 'holiday') return 'holiday'
+  if (status === 'comp-off') return 'comp-off'
+  return 'blocked'
+}
+
+function formatHolidayList(holidays = []) {
+  return holidays.map((holiday) => {
+    const date = new Date(`${holiday.date}T00:00:00`)
+    return `${date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })} - ${holiday.name}`
+  })
+}
+
 function getMonthStartDate(attendanceMonth, employee) {
   if (attendanceMonth) {
     return new Date(`${attendanceMonth}-01T00:00:00`)
@@ -35,8 +50,11 @@ function AttendanceDetails({ attendanceMonth, employee, monthLabel, totalDays })
       <div className="attendance-summary-badges">
         <span className="status-pill status-completed">Present: {employee.presentDays}</span>
         <span className="status-pill status-leave">Leave: {employee.leaveDays || 0}</span>
+        <span className="status-pill status-comp-off">Comp-off: {employee.compOffDays || 0}</span>
+        <span className="status-pill status-pending">Paid leave balance: {employee.paidLeaveRemaining ?? employee.paidLeaveLimit ?? 15}</span>
         <span className="status-pill status-holiday">Holiday: {employee.holidayDays || 0}</span>
         <span className="status-pill status-blocked">Absent: {employee.absentDays}</span>
+        <span className="status-pill">Paid leave used: {employee.paidLeaveUsed ?? employee.paidLeaveDays ?? 0}</span>
         <span className="status-pill">{totalDays || employee.attendance.length} total days</span>
       </div>
 
@@ -56,9 +74,10 @@ function AttendanceDetails({ attendanceMonth, employee, monthLabel, totalDays })
           {employee.attendance.map((day) => (
             <div className="attendance-day-card" key={`${employee.id}-${day.date}`}>
               <strong>{day.label}</strong>
-              <span className={`status-pill status-${day.status === 'present' ? 'completed' : day.status === 'leave' ? 'leave' : day.status === 'holiday' ? 'holiday' : 'blocked'}`}>
+              <span className={`status-pill status-${getAttendanceStatusClass(day.status)}`}>
                 {day.status}
               </span>
+              {day.holidayName ? <div className="attendance-day-note">{day.holidayName}</div> : null}
             </div>
           ))}
         </div>
@@ -69,6 +88,7 @@ function AttendanceDetails({ attendanceMonth, employee, monthLabel, totalDays })
 
 export default function AdminAttendanceSection({ attendance, attendanceMonth, setAttendanceMonth }) {
   const employees = Array.isArray(attendance?.employees) ? attendance.employees : []
+  const holidayList = formatHolidayList(attendance?.holidays || [])
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -119,10 +139,27 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
             </div>
           </div>
         }
-        description="Attendance is generated automatically from submitted work reports for the selected month."
+        description={`Attendance is generated automatically from submitted work reports for the selected month. Paid leave is capped at ${attendance?.paidLeaveLimit || 15} days per year.`}
         eyebrow="Attendance"
         title={attendance.monthLabel || 'Monthly attendance summary'}
       />
+
+      {holidayList.length ? (
+        <section className="glass-card section-card admin-panel">
+          <div className="section-head admin-section-head">
+            <div>
+              <div className="eyebrow">Government holidays</div>
+              <h3>{attendance.monthLabel || 'Selected month'} holiday calendar</h3>
+              <p className="muted">These holidays are counted in the holiday column and shown inside each employee calendar.</p>
+            </div>
+          </div>
+          <div className="attendance-holiday-list">
+            {holidayList.map((holiday) => (
+              <span className="status-pill status-holiday" key={holiday}>{holiday}</span>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {filteredEmployees.length === 0 ? (
         <div className="empty-state">
@@ -138,6 +175,7 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                   <th>Department</th>
                   <th>Present Days</th>
                   <th>Leave Days</th>
+                  <th>Paid Leave</th>
                   <th>Holiday Days</th>
                   <th>Absent Days</th>
                 </tr>
@@ -162,12 +200,13 @@ export default function AdminAttendanceSection({ attendance, attendanceMonth, se
                         <td><span className="table-soft-text">{employee.department || '-'}</span></td>
                         <td><span className="status-pill status-completed">{employee.presentDays}</span></td>
                         <td><span className="status-pill status-leave">{employee.leaveDays || 0}</span></td>
+                        <td><span className="status-pill status-pending">{employee.paidLeaveRemaining ?? employee.paidLeaveLimit ?? 15}</span></td>
                         <td><span className="status-pill status-holiday">{employee.holidayDays || 0}</span></td>
                         <td><span className="status-pill status-blocked">{employee.absentDays}</span></td>
                       </tr>
                       {isOpen ? (
                         <tr className="attendance-expanded-row">
-                          <td colSpan="6">
+                          <td colSpan="7">
                             <AttendanceDetails
                               attendanceMonth={attendanceMonth}
                               employee={employee}

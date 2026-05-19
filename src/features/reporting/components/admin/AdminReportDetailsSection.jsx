@@ -3,7 +3,38 @@ import { getPhotoSrc, normalizeReportPhotos } from '../../utils'
 import { ReportPhotoGrid } from '../SharedReportingUi'
 import AdminSectionIntro from './AdminSectionIntro'
 
-export default function AdminReportDetailsSection({ report }) {
+export default function AdminReportDetailsSection({ loading, report }) {
+  if (loading) {
+    if (report) {
+      return (
+        <>
+          <AdminSectionIntro
+            aside={<span className={`status-pill status-${report.status}`}>{report.status?.replace('-', ' ') || 'loading'}</span>}
+            description="Basic report information is ready. Loading the full report details and attachments."
+            eyebrow="Report details"
+            title={report.siteName || 'Loading report...'}
+          />
+
+          <section className="glass-card section-card admin-panel">
+            <p className="muted">Loading full report details and attached photos...</p>
+          </section>
+        </>
+      )
+    }
+
+    return (
+      <section className="glass-card section-card">
+        <div className="section-head">
+          <div>
+            <div className="eyebrow">Report details</div>
+            <h3>Loading report...</h3>
+          </div>
+        </div>
+        <p className="muted">Fetching the full report, employee info, and attached photos.</p>
+      </section>
+    )
+  }
+
   if (!report) {
     return (
       <section className="glass-card section-card">
