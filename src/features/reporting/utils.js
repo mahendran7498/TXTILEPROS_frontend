@@ -1,5 +1,5 @@
 import imageCompression from 'browser-image-compression'
-import { MAX_REPORT_PHOTO_SIZE_BYTES } from './constants'
+import { MAX_BEFORE_WORK_PHOTOS, MAX_REPORT_PHOTO_SIZE_BYTES } from './constants'
 
 const REPORT_PHOTO_LIMIT_MB = MAX_REPORT_PHOTO_SIZE_BYTES / (1024 * 1024)
 const IMAGE_COMPRESSION_OPTIONS = {
@@ -60,7 +60,7 @@ function readFileAsDataUrl(file) {
 export function readFiles(files) {
   return Promise.all(
     Array.from(files)
-      .slice(0, 4)
+      .slice(0, MAX_BEFORE_WORK_PHOTOS)
       .map(async (file) => {
         const compressedFile = await compressReportImage(file)
 
@@ -85,35 +85,22 @@ export async function readSingleFile(file, kind) {
   return { ...photo, kind }
 }
 
+export async function readMultipleFiles(files, kind) {
+  const photos = await readFiles(files)
+  return photos.map((photo) => ({ ...photo, kind }))
+}
+
 export function normalizeReportPhotos(photos = []) {
   const items = Array.isArray(photos) ? photos : []
-  let beforeAssigned = false
-  let afterAssigned = false
 
   return items.map((photo, index) => {
     const rawKind = String(photo?.kind || '').toLowerCase()
 
-    if (rawKind === 'before' && !beforeAssigned) {
-      beforeAssigned = true
-      return { ...photo, displayKind: 'before' }
+    if (rawKind === 'before' || rawKind === 'after') {
+      return { ...photo, displayKind: rawKind }
     }
 
-    if (rawKind === 'after' && !afterAssigned) {
-      afterAssigned = true
-      return { ...photo, displayKind: 'after' }
-    }
-
-    if (!beforeAssigned) {
-      beforeAssigned = true
-      return { ...photo, displayKind: 'before' }
-    }
-
-    if (!afterAssigned) {
-      afterAssigned = true
-      return { ...photo, displayKind: 'after' }
-    }
-
-    return { ...photo, displayKind: index === 0 ? 'before' : 'after' }
+    return { ...photo, displayKind: index === items.length - 1 ? 'after' : 'before' }
   })
 }
 

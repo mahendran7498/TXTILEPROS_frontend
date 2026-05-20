@@ -216,9 +216,10 @@ export default function useReportingPortal() {
     setSubmitting(true)
 
     try {
-      const photos = [form.photos.before, form.photos.after].filter(Boolean)
-      if (photos.length !== 2) {
-        throw new Error('Please upload both before-work and after-work photos.')
+      const beforePhotos = Array.isArray(form.photos.before) ? form.photos.before : []
+      const photos = [...beforePhotos, form.photos.after].filter(Boolean)
+      if (!beforePhotos.length || !form.photos.after) {
+        throw new Error('Please upload at least one before-work photo and one after-work photo.')
       }
 
       await apiRequest('/reports', { method: 'POST', body: { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) } }, token)

@@ -2,7 +2,8 @@ import { getLocalDateInputValue } from './utils'
 
 export const API_URL = import.meta.env.VITE_API_URL || 'https://txtilepros-backend.vercel.app/api'
 export const TOKEN_KEY = 'employee-reporting-token'
-export const MAX_REPORT_PHOTO_SIZE_BYTES = 4 * 1024 * 1024
+export const MAX_REPORT_PHOTO_SIZE_BYTES = 3 * 1024 * 1024
+export const MAX_BEFORE_WORK_PHOTOS = 4
 
 export function createEmptyReportForm() {
   return {
@@ -17,7 +18,7 @@ export function createEmptyReportForm() {
     materialsUsed: '',
     status: 'completed',
     photos: {
-      before: null,
+      before: [],
       after: null,
     },
   }

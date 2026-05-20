@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { MAX_REPORT_PHOTO_SIZE_BYTES } from '../constants'
+import { MAX_BEFORE_WORK_PHOTOS, MAX_REPORT_PHOTO_SIZE_BYTES } from '../constants'
 import { getLocalDateInputValue } from '../utils'
-import { getPhotoSrc, normalizeReportPhotos, readSingleFile } from '../utils'
+import { getPhotoSrc, normalizeReportPhotos, readMultipleFiles, readSingleFile } from '../utils'
 import { ReportPhotoGrid, StatCard } from './SharedReportingUi'
 
 const REPORT_PHOTO_LIMIT_MB = Math.floor(MAX_REPORT_PHOTO_SIZE_BYTES / (1024 * 1024))
@@ -98,11 +98,27 @@ function ReportList({ reports, showEmployee, title }) {
 
 function ReportForm({ form, setForm, submitting, onSubmit }) {
   async function handleFileChange(event, kind) {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const files = Array.from(event.target.files || [])
+    if (!files.length) return
 
     try {
-      const photo = await readSingleFile(file, kind)
+      if (kind === 'before') {
+        if (files.length > MAX_BEFORE_WORK_PHOTOS) {
+          toast.error(`You can select up to ${MAX_BEFORE_WORK_PHOTOS} before-work photos.`)
+        }
+
+        const photos = await readMultipleFiles(files.slice(0, MAX_BEFORE_WORK_PHOTOS), kind)
+        setForm((current) => ({
+          ...current,
+          photos: {
+            ...current.photos,
+            before: photos,
+          },
+        }))
+        return
+      }
+
+      const photo = await readSingleFile(files[0], kind)
       setForm((current) => ({
         ...current,
         photos: {
@@ -112,6 +128,8 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
       }))
     } catch (error) {
       toast.error(error.message)
+    } finally {
+      event.target.value = ''
     }
   }
 
@@ -173,9 +191,9 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
           </select>
         </label>
         <label className="field">
-          <span>Before work photo</span>
-          <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => handleFileChange(event, 'before')} />
-          <small>Upload the machine/site condition before starting work. Max {REPORT_PHOTO_LIMIT_MB}MB.</small>
+          <span>Before work photos</span>
+          <input type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={(event) => handleFileChange(event, 'before')} />
+          <small>Upload up to {MAX_BEFORE_WORK_PHOTOS} machine/site photos before starting work. Max {REPORT_PHOTO_LIMIT_MB}MB each.</small>
         </label>
         <label className="field">
           <span>After work photo</span>
@@ -184,10 +202,10 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
         </label>
 
         <div className="field-wide photo-preview-grid">
-          {!form.photos.before && !form.photos.after ? <div className="empty-state small-empty">Before and after photo previews will appear here.</div> : null}
-          {Object.values(form.photos).filter(Boolean).map((photo) => (
-            <div className="photo-chip" key={photo.kind}>
-              <span className="photo-label photo-chip-label">{photo.kind === 'before' ? 'Before work' : 'After work'}</span>
+          {!form.photos.before.length && !form.photos.after ? <div className="empty-state small-empty">Before and after photo previews will appear here.</div> : null}
+          {[...form.photos.before, form.photos.after].filter(Boolean).map((photo, index) => (
+            <div className="photo-chip" key={`${photo.kind}-${photo.name}-${index}`}>
+              <span className="photo-label photo-chip-label">{photo.kind === 'before' ? `Before work ${index + 1}` : 'After work'}</span>
               <img alt={photo.name} src={photo.dataUrl} />
               <span>{photo.name}</span>
             </div>
