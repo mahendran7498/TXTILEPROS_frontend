@@ -1,10 +1,15 @@
 import { Toaster, toast } from 'react-hot-toast'
 import Footer from '../../components/Footer'
+import AccessDeniedPanel from '../../components/AccessDeniedPanel'
 import AdminDashboard from './components/AdminDashboard'
 import EmployeeDashboard from './components/EmployeeDashboard'
 import LoginScreen from './components/LoginScreen'
 import { DashboardHeader, TopCornerActions } from './components/SharedReportingUi'
 import useReportingPortal from './useReportingPortal'
+
+function isSalesDepartment(user) {
+  return String(user?.department || '').trim().toLowerCase() === 'sales'
+}
 
 export default function ReportingPortalPage() {
   const {
@@ -63,6 +68,10 @@ export default function ReportingPortalPage() {
         <Footer />
       </>
     )
+  }
+
+  if (user.role === 'sales' || (user.role === 'employee' && isSalesDepartment(user))) {
+    return <AccessDeniedPanel message="Sales users cannot access the service module." />
   }
 
   return (

@@ -605,6 +605,66 @@ a {
   margin-bottom: 16px;
 }
 
+.access-panel {
+  margin: 4rem auto;
+  max-width: 42rem;
+  text-align: center;
+}
+
+.owner-hub {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.owner-hub-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.owner-link-card {
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.owner-link-card:hover {
+  transform: translateY(-2px);
+}
+
+.login-module-switch {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.login-module-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(255,255,255,0.62);
+  border: 1px solid rgba(15,23,42,0.08);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.login-module-chip:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.88);
+}
+
+.login-module-chip.active {
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-color: var(--primary);
+  box-shadow: 0 12px 28px rgba(31, 107, 79, 0.22);
+}
+
 .attendance-holiday-list {
   display: flex;
   gap: 12px;
@@ -688,6 +748,17 @@ a {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.sales-stats-row {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.sales-stats-row > .stat-card {
+  flex: 1 1 240px;
 }
 
 .employee-form-grid {
@@ -977,4 +1048,5 @@ a {
     text-align: center;
     padding: 10px 12px;
   }
+
 }

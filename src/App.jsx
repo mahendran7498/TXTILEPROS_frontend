@@ -5,6 +5,8 @@ import FloatingActions from './components/FloatingActions'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
 import ReportingPortal from './pages/ReportingPortal'
+import SalesPortal from './pages/SalesPortal'
+import OwnerDashboard from './pages/OwnerDashboard'
 import { About, Blog, Gallery, Products, Projects, Services } from './pages/OtherPages'
 
 function MarketingLayout() {
@@ -32,6 +34,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/login" element={<ReportingPortal />} />
+      <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/dashboard" element={<ReportingPortal />} />
       <Route path="/dashboard/admin" element={<ReportingPortal />} />
       <Route path="/dashboard/admin/attendance" element={<ReportingPortal />} />
@@ -39,6 +42,12 @@ export default function App() {
       <Route path="/dashboard/admin/reports" element={<ReportingPortal />} />
       <Route path="/dashboard/admin/reports/:reportId" element={<ReportingPortal />} />
       <Route path="/dashboard/admin/employees" element={<ReportingPortal />} />
+      <Route path="/sales/login" element={<SalesPortal />} />
+      <Route path="/sales/dashboard" element={<SalesPortal />} />
+      <Route path="/sales/orders/new" element={<SalesPortal />} />
+      <Route path="/sales/orders" element={<SalesPortal />} />
+      <Route path="/sales/admin/orders" element={<SalesPortal />} />
+      <Route path="/sales/admin/employees" element={<SalesPortal />} />
       <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
   )

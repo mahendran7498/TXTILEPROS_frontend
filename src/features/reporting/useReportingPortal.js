@@ -5,6 +5,10 @@ import { apiRequest } from './api'
 import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
 import { getLocalMonthInputValue, getWeekStartValue } from './utils'
 
+function isSalesDepartment(user) {
+  return String(user?.department || '').trim().toLowerCase() === 'sales'
+}
+
 export default function useReportingPortal() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -61,14 +65,21 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     if (user && location.pathname === '/login') {
-      navigate(user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(
+        user.role === 'admin' ? '/owner/dashboard' : isSalesDepartment(user) || user.role === 'sales' ? '/sales/dashboard' : '/dashboard',
+        { replace: true }
+      )
     }
   }, [location.pathname, navigate, user])
 
   useEffect(() => {
     if (!user) return
+    if (user.role === 'sales' || (user.role === 'employee' && isSalesDepartment(user))) {
+      navigate('/sales/dashboard', { replace: true })
+      return
+    }
     if (user.role === 'admin' && location.pathname === '/dashboard') {
-      navigate('/dashboard/admin', { replace: true })
+      navigate('/owner/dashboard', { replace: true })
     }
     if (user.role !== 'admin' && location.pathname.startsWith('/dashboard/admin')) {
       navigate('/dashboard', { replace: true })
@@ -203,7 +214,10 @@ export default function useReportingPortal() {
       setUser(data.user)
       setCredentials({ email: '', password: '' })
       toast.success(`Welcome back, ${data.user.name}`)
-      navigate(data.user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(
+        data.user.role === 'admin' ? '/owner/dashboard' : isSalesDepartment(data.user) || data.user.role === 'sales' ? '/sales/dashboard' : '/dashboard',
+        { replace: true }
+      )
     } catch (error) {
       toast.error(error.message)
     } finally {
