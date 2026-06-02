@@ -6,7 +6,7 @@ import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY }
 import { getLocalMonthInputValue, getWeekStartValue } from './utils'
 
 function isSalesDepartment(user) {
-  return String(user?.department || '').trim().toLowerCase() === 'sales'
+  return String(user?.department || '').trim().toLowerCase().includes('sales')
 }
 
 function isOwner(user) {

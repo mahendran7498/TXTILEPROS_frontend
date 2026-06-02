@@ -8,7 +8,7 @@ import { DashboardHeader, TopCornerActions } from './components/SharedReportingU
 import useReportingPortal from './useReportingPortal'
 
 function isSalesDepartment(user) {
-  return String(user?.department || '').trim().toLowerCase() === 'sales'
+  return String(user?.department || '').trim().toLowerCase().includes('sales')
 }
 
 function canAccessServiceManagement(user) {
