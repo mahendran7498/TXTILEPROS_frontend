@@ -6,6 +6,7 @@ import { getPhotoSrc, normalizeReportPhotos, readMultipleFiles, readSingleFile }
 import { ReportPhotoGrid, StatCard } from './SharedReportingUi'
 
 const REPORT_PHOTO_LIMIT_MB = Math.floor(MAX_REPORT_PHOTO_SIZE_BYTES / (1024 * 1024))
+const REPORT_EDIT_WINDOW_MS = 60 * 60 * 1000
 
 function EmployeeSectionIntro({ eyebrow, title, description, aside }) {
   return (
@@ -31,7 +32,13 @@ function formatLeaveRange(leave) {
   return start === end ? start : `${start} - ${end}`
 }
 
-function ReportList({ reports, showEmployee, title }) {
+function getRemainingEditMinutes(report) {
+  const elapsedMs = Date.now() - new Date(report.createdAt).getTime()
+  const remainingMs = Math.max(REPORT_EDIT_WINDOW_MS - elapsedMs, 0)
+  return Math.ceil(remainingMs / (60 * 1000))
+}
+
+function ReportList({ onEditReport, reports, showEmployee, title }) {
   return (
     <section className="glass-card section-card employee-panel">
       <div className="section-head employee-section-head">
@@ -56,6 +63,8 @@ function ReportList({ reports, showEmployee, title }) {
               alt: photo.originalName,
               label: photo.displayKind === 'before' ? 'Before work' : 'After work',
             }))
+            const canEdit = (Date.now() - new Date(report.createdAt).getTime()) <= REPORT_EDIT_WINDOW_MS
+            const remainingEditMinutes = getRemainingEditMinutes(report)
 
             return (
               <article className="report-card employee-report-card" key={report._id}>
@@ -68,6 +77,12 @@ function ReportList({ reports, showEmployee, title }) {
                   </div>
                   <span className={`status-pill status-${report.status}`}>{report.status.replace('-', ' ')}</span>
                 </div>
+                {canEdit ? (
+                  <div className="report-footer">
+                    <span>Edit available for {remainingEditMinutes} more min</span>
+                    <button className="ghost-button inline-button" onClick={() => onEditReport(report)} type="button">Edit report</button>
+                  </div>
+                ) : null}
 
                 {showEmployee && report.user ? (
                   <p className="muted">
@@ -96,7 +111,7 @@ function ReportList({ reports, showEmployee, title }) {
   )
 }
 
-function ReportForm({ form, setForm, submitting, onSubmit }) {
+function ReportForm({ editingReportId, form, onCancelEdit, setForm, submitting, onSubmit }) {
   async function handleFileChange(event, kind) {
     const files = Array.from(event.target.files || [])
     if (!files.length) return
@@ -138,9 +153,14 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
       <div className="section-head employee-section-head">
         <div>
           <div className="eyebrow">Daily update</div>
-          <h3>Submit work report</h3>
-          <p className="muted">Capture work done, machine status, materials used, and before-after photo proof from the field.</p>
+          <h3>{editingReportId ? 'Edit work report' : 'Submit work report'}</h3>
+          <p className="muted">
+            {editingReportId
+              ? 'Update your submitted report. Edits are allowed only within 1 hour of submission.'
+              : 'Capture work done, machine status, materials used, and before-after photo proof from the field.'}
+          </p>
         </div>
+        {editingReportId ? <button className="ghost-button inline-button" onClick={onCancelEdit} type="button">Cancel edit</button> : null}
       </div>
 
       <form className="report-grid employee-form-grid" onSubmit={onSubmit}>
@@ -204,16 +224,16 @@ function ReportForm({ form, setForm, submitting, onSubmit }) {
         <div className="field-wide photo-preview-grid">
           {!form.photos.before.length && !form.photos.after ? <div className="empty-state small-empty">Before and after photo previews will appear here.</div> : null}
           {[...form.photos.before, form.photos.after].filter(Boolean).map((photo, index) => (
-            <div className="photo-chip" key={`${photo.kind}-${photo.name}-${index}`}>
+            <div className="photo-chip" key={`${photo.kind}-${photo.name || photo.originalName || index}-${index}`}>
               <span className="photo-label photo-chip-label">{photo.kind === 'before' ? `Before work ${index + 1}` : 'After work'}</span>
-              <img alt={photo.name} src={photo.dataUrl} />
-              <span>{photo.name}</span>
+              <img alt={photo.name || photo.originalName || 'Report photo'} src={getPhotoSrc(photo)} />
+              <span>{photo.name || photo.originalName || 'Uploaded photo'}</span>
             </div>
           ))}
         </div>
 
         <button className="primary-button field-wide" disabled={submitting} type="submit">
-          {submitting ? 'Submitting report...' : 'Save work report'}
+          {submitting ? (editingReportId ? 'Updating report...' : 'Submitting report...') : (editingReportId ? 'Update work report' : 'Save work report')}
         </button>
       </form>
     </section>
@@ -310,11 +330,14 @@ function LeaveList({ leaves }) {
 }
 
 export default function EmployeeDashboard({
+  editingReportId,
   summary,
   reports,
   leaves,
   form,
   leaveForm,
+  onCancelReportEdit,
+  onEditReport,
   setForm,
   setLeaveForm,
   submitting,
@@ -373,8 +396,8 @@ export default function EmployeeDashboard({
 
       {activeSection === 'reports' ? (
         <div className="employee-dashboard-grid">
-          <ReportForm form={form} setForm={setForm} submitting={submitting} onSubmit={onSubmit} />
-          <ReportList reports={reports} showEmployee={false} title="Your weekly reports" />
+          <ReportForm editingReportId={editingReportId} form={form} onCancelEdit={onCancelReportEdit} setForm={setForm} submitting={submitting} onSubmit={onSubmit} />
+          <ReportList onEditReport={onEditReport} reports={reports} showEmployee={false} title="Your weekly reports" />
         </div>
       ) : null}
 

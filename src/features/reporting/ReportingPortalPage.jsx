@@ -24,9 +24,12 @@ export default function ReportingPortalPage() {
     credentials,
     dashboard,
     form,
+    editingReportId,
     handleLeaveDecision,
+    handleEditReport,
     handleLogin,
     handleLogout,
+    handleCancelReportEdit,
     handleLeaveSubmit,
     handleReportSubmit,
     handleUserSubmit,
@@ -113,9 +116,12 @@ export default function ReportingPortalPage() {
           ) : (
             <EmployeeDashboard
               form={form}
+              editingReportId={editingReportId}
               leaveForm={leaveForm}
               leaveSubmitting={leaveSubmitting}
               leaves={leaves}
+              onCancelReportEdit={handleCancelReportEdit}
+              onEditReport={handleEditReport}
               onLeaveSubmit={handleLeaveSubmit}
               onSubmit={handleReportSubmit}
               reports={reports}

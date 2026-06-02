@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { apiRequest } from './api'
-import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
+import { createEmptyLeaveForm, createEmptyReportForm, createReportFormFromReport, emptyUserForm, TOKEN_KEY } from './constants'
 import { getLocalMonthInputValue, getWeekStartValue } from './utils'
 
 function isSalesDepartment(user) {
@@ -39,6 +39,7 @@ export default function useReportingPortal() {
   const [selectedReport, setSelectedReport] = useState(null)
   const [selectedReportLoading, setSelectedReportLoading] = useState(false)
   const [form, setForm] = useState(() => createEmptyReportForm())
+  const [editingReportId, setEditingReportId] = useState('')
   const [leaveForm, setLeaveForm] = useState(() => createEmptyLeaveForm())
   const [userForm, setUserForm] = useState(emptyUserForm)
   const [authLoading, setAuthLoading] = useState(false)
@@ -249,15 +250,31 @@ export default function useReportingPortal() {
         throw new Error('Please upload at least one before-work photo and one after-work photo.')
       }
 
-      await apiRequest('/reports', { method: 'POST', body: { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) } }, token)
+      const payload = { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) }
+      if (editingReportId) {
+        await apiRequest(`/reports/${editingReportId}`, { method: 'PATCH', body: payload }, token)
+      } else {
+        await apiRequest('/reports', { method: 'POST', body: payload }, token)
+      }
       setForm(createEmptyReportForm())
-      toast.success('Work report saved')
+      setEditingReportId('')
+      toast.success(editingReportId ? 'Work report updated' : 'Work report saved')
       await refreshDashboard()
     } catch (error) {
       toast.error(error.message)
     } finally {
       setSubmitting(false)
     }
+  }
+
+  function handleEditReport(report) {
+    setForm(createReportFormFromReport(report))
+    setEditingReportId(String(report._id || ''))
+  }
+
+  function handleCancelReportEdit() {
+    setForm(createEmptyReportForm())
+    setEditingReportId('')
   }
 
   async function handleUserSubmit(event) {
@@ -338,9 +355,12 @@ export default function useReportingPortal() {
     credentials,
     dashboard,
     form,
+    editingReportId,
     handleLeaveDecision,
+    handleEditReport,
     handleLogin,
     handleLogout,
+    handleCancelReportEdit,
     handleLeaveSubmit,
     handleReportSubmit,
     handleUserSubmit,

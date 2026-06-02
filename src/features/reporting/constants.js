@@ -24,6 +24,27 @@ export function createEmptyReportForm() {
   }
 }
 
+export function createReportFormFromReport(report) {
+  const photos = Array.isArray(report?.photos) ? report.photos : []
+
+  return {
+    workDate: report?.workDate ? String(report.workDate).slice(0, 10) : getLocalDateInputValue(),
+    siteName: report?.siteName || '',
+    clientName: report?.clientName || '',
+    machineName: report?.machineName || '',
+    shift: report?.shift || 'General',
+    hoursWorked: String(report?.hoursWorked ?? '8'),
+    workSummary: report?.workSummary || '',
+    problemsObserved: report?.problemsObserved || '',
+    materialsUsed: report?.materialsUsed || '',
+    status: report?.status || 'completed',
+    photos: {
+      before: photos.filter((photo) => String(photo?.kind || '').toLowerCase() === 'before'),
+      after: photos.find((photo) => String(photo?.kind || '').toLowerCase() === 'after') || null,
+    },
+  }
+}
+
 export const emptyReportForm = createEmptyReportForm()
 
 export const emptyUserForm = {
