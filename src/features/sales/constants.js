@@ -17,6 +17,7 @@ export function createEmptySalesEmployeeForm() {
     name: '',
     email: '',
     password: '',
+    role: 'employee',
     employeeCode: '',
     phone: '',
   }

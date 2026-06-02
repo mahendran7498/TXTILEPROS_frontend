@@ -9,6 +9,18 @@ function isSalesDepartment(user) {
   return String(user?.department || '').trim().toLowerCase() === 'sales'
 }
 
+function isOwner(user) {
+  return user?.role === 'admin'
+}
+
+function isServiceManager(user) {
+  return user?.role === 'manager' && !isSalesDepartment(user)
+}
+
+function canAccessServiceManagement(user) {
+  return isOwner(user) || isServiceManager(user)
+}
+
 export default function useReportingPortal() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -36,7 +48,7 @@ export default function useReportingPortal() {
   const [leaveActionLoadingId, setLeaveActionLoadingId] = useState('')
   const [userSaving, setUserSaving] = useState(false)
 
-  const pageTitle = user?.role === 'admin' ? 'Admin Operations Hub' : 'Field Reporting Workspace'
+  const pageTitle = canAccessServiceManagement(user) ? 'Service Management Hub' : 'Field Reporting Workspace'
 
   useEffect(() => {
     document.title = `TXTILPROS | ${pageTitle}`
@@ -66,7 +78,7 @@ export default function useReportingPortal() {
   useEffect(() => {
     if (user && location.pathname === '/login') {
       navigate(
-        user.role === 'admin' ? '/owner/dashboard' : isSalesDepartment(user) || user.role === 'sales' ? '/sales/dashboard' : '/dashboard',
+        isOwner(user) ? '/owner/dashboard' : isSalesDepartment(user) ? '/sales/dashboard' : canAccessServiceManagement(user) ? '/dashboard/admin' : '/dashboard',
         { replace: true }
       )
     }
@@ -74,14 +86,15 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     if (!user) return
-    if (user.role === 'sales' || (user.role === 'employee' && isSalesDepartment(user))) {
+    if (isSalesDepartment(user)) {
       navigate('/sales/dashboard', { replace: true })
       return
     }
-    if (user.role === 'admin' && location.pathname === '/dashboard') {
-      navigate('/owner/dashboard', { replace: true })
+    if (canAccessServiceManagement(user) && location.pathname === '/dashboard') {
+      navigate(isOwner(user) ? '/owner/dashboard' : '/dashboard/admin', { replace: true })
+      return
     }
-    if (user.role !== 'admin' && location.pathname.startsWith('/dashboard/admin')) {
+    if (!canAccessServiceManagement(user) && location.pathname.startsWith('/dashboard/admin')) {
       navigate('/dashboard', { replace: true })
     }
   }, [location.pathname, navigate, user])
@@ -90,7 +103,7 @@ export default function useReportingPortal() {
     if (!token || !user) return
 
     try {
-      if (user.role === 'admin') {
+      if (canAccessServiceManagement(user)) {
         if (location.pathname === '/dashboard/admin') {
           const [dashboardData, reportsData] = await Promise.all([
             apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
@@ -173,7 +186,7 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     async function loadSelectedReport() {
-      if (!token || user?.role !== 'admin' || !reportId) {
+      if (!token || !canAccessServiceManagement(user) || !reportId) {
         setSelectedReport(null)
         setSelectedReportLoading(false)
         return
@@ -215,7 +228,7 @@ export default function useReportingPortal() {
       setCredentials({ email: '', password: '' })
       toast.success(`Welcome back, ${data.user.name}`)
       navigate(
-        data.user.role === 'admin' ? '/owner/dashboard' : isSalesDepartment(data.user) || data.user.role === 'sales' ? '/sales/dashboard' : '/dashboard',
+        isOwner(data.user) ? '/owner/dashboard' : isSalesDepartment(data.user) ? '/sales/dashboard' : canAccessServiceManagement(data.user) ? '/dashboard/admin' : '/dashboard',
         { replace: true }
       )
     } catch (error) {

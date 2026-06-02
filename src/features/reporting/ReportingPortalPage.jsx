@@ -11,6 +11,10 @@ function isSalesDepartment(user) {
   return String(user?.department || '').trim().toLowerCase() === 'sales'
 }
 
+function canAccessServiceManagement(user) {
+  return user?.role === 'admin' || (user?.role === 'manager' && !isSalesDepartment(user))
+}
+
 export default function ReportingPortalPage() {
   const {
     adminSectionPath,
@@ -70,7 +74,7 @@ export default function ReportingPortalPage() {
     )
   }
 
-  if (user.role === 'sales' || (user.role === 'employee' && isSalesDepartment(user))) {
+  if (isSalesDepartment(user)) {
     return <AccessDeniedPanel message="Sales users cannot access the service module." />
   }
 
@@ -84,7 +88,7 @@ export default function ReportingPortalPage() {
         <section className="hero-panel">
           <DashboardHeader onLogout={handleLogout} refresh={refreshDashboard} setWeekStart={setWeekStart} user={user} weekStart={weekStart} />
 
-          {user.role === 'admin' ? (
+          {canAccessServiceManagement(user) ? (
             <AdminDashboard
               activePath={adminSectionPath}
               attendance={attendance}

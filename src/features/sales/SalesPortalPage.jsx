@@ -4,16 +4,16 @@ import Footer from '../../components/Footer'
 import AccessDeniedPanel from '../../components/AccessDeniedPanel'
 import SalesLoginScreen from './components/SalesLoginScreen'
 import useSalesPortal from './useSalesPortal'
-import { isSalesUser } from './utils'
+import { isOwner, isSalesManager, isSalesUser } from './utils'
 
 function SalesNavigation({ activePath, user }) {
-  const isOwner = user?.role === 'admin'
-  const items = isOwner
+  const canManageSales = isOwner(user) || isSalesManager(user)
+  const items = canManageSales
     ? [
         { label: 'Overview', path: '/sales/dashboard' },
         { label: 'All Sales Orders', path: '/sales/admin/orders' },
-        { label: 'Sales Employees', path: '/sales/admin/employees' },
-        { label: 'Owner Hub', path: '/owner/dashboard' },
+        { label: 'Sales Team', path: '/sales/admin/employees' },
+        ...(isOwner(user) ? [{ label: 'Owner Hub', path: '/owner/dashboard' }] : []),
       ]
     : [
         { label: 'Overview', path: '/sales/dashboard' },
@@ -138,8 +138,8 @@ function SalesEmployeesSection({ form, onSubmit, salesUsers, saving, setForm }) 
         <div className="section-head">
           <div>
             <div className="eyebrow">Sales access</div>
-            <h3>Create sales employee</h3>
-            <p className="muted">Users created here are automatically added as Employee role with Sales department.</p>
+            <h3>Create sales user</h3>
+            <p className="muted">Users created here are added to the Sales department with either Employee or Manager access.</p>
           </div>
         </div>
 
@@ -147,11 +147,18 @@ function SalesEmployeesSection({ form, onSubmit, salesUsers, saving, setForm }) 
           <label className="field"><span>Name</span><input required value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} /></label>
           <label className="field"><span>Email</span><input required type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} /></label>
           <label className="field"><span>Password</span><input required type="password" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} /></label>
+          <label className="field">
+            <span>Role</span>
+            <select value={form.role} onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))}>
+              <option value="employee">Employee</option>
+              <option value="manager">Manager</option>
+            </select>
+          </label>
           <label className="field"><span>Employee code</span><input value={form.employeeCode} onChange={(event) => setForm((current) => ({ ...current, employeeCode: event.target.value }))} /></label>
           <label className="field"><span>Phone</span><input value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} /></label>
           <label className="field"><span>Department</span><input disabled value="Sales" /></label>
           <button className="primary-button field-wide" disabled={saving} type="submit">
-            {saving ? 'Creating user...' : 'Create sales employee'}
+            {saving ? 'Creating user...' : 'Create sales user'}
           </button>
         </form>
       </section>
@@ -199,16 +206,16 @@ function SalesEmployeesSection({ form, onSubmit, salesUsers, saving, setForm }) 
 }
 
 function SalesOverviewSection({ dashboard, user }) {
-  const isOwner = user?.role === 'admin'
+  const canManageSales = isOwner(user) || isSalesManager(user)
 
   return (
     <section className="glass-card section-card employee-panel">
       <div className="section-head employee-section-head">
         <div>
           <div className="eyebrow">Module overview</div>
-          <h3>{isOwner ? 'Sales operations overview' : 'Sales workspace overview'}</h3>
+          <h3>{canManageSales ? 'Sales operations overview' : 'Sales workspace overview'}</h3>
           <p className="muted">
-            {isOwner
+            {canManageSales
               ? 'Use the separate sections below to manage sales staff and review all sales orders.'
               : 'Use the separate sections below to add new orders and review only your own sales records.'}
           </p>
@@ -216,7 +223,7 @@ function SalesOverviewSection({ dashboard, user }) {
       </div>
 
       <div className="admin-dual-grid">
-        {isOwner ? (
+        {canManageSales ? (
           <>
             <Link className="glass-card section-card owner-link-card" to="/sales/admin/orders">
               <div className="eyebrow">Orders</div>
@@ -286,8 +293,8 @@ export default function SalesPortalPage() {
     )
   }
 
-  if (!isSalesUser(user) && user.role !== 'admin') {
-    return <AccessDeniedPanel message="Only Sales users and Owner can access the sales module." />
+  if (!isSalesUser(user) && !isSalesManager(user) && !isOwner(user)) {
+    return <AccessDeniedPanel message="Only Sales employees, Sales managers, and Owner can access the sales module." />
   }
 
   return (
@@ -300,7 +307,7 @@ export default function SalesPortalPage() {
           <header className="dashboard-header">
             <div>
               <div className="eyebrow">Independent sales workspace</div>
-              <h2>{user.role === 'admin' ? 'Owner sales view' : 'Sales dashboard'}</h2>
+              <h2>{isOwner(user) ? 'Owner sales view' : isSalesManager(user) ? 'Sales manager dashboard' : 'Sales dashboard'}</h2>
               <p className="muted">Signed in as {user.name} ({user.role}){user.department ? ` | ${user.department}` : ''}</p>
             </div>
             <div className="header-actions">
@@ -321,11 +328,11 @@ export default function SalesPortalPage() {
             <OrdersTable orders={orders} subtitle="Only orders created by your sales account are visible here." title="My Orders" />
           ) : null}
 
-          {user.role === 'admin' && path === '/sales/admin/orders' ? (
+          {(isOwner(user) || isSalesManager(user)) && path === '/sales/admin/orders' ? (
             <OrdersTable orders={orders} subtitle="Owner can review every sales order across the system." title="All Sales Orders" />
           ) : null}
 
-          {user.role === 'admin' && path === '/sales/admin/employees' ? (
+          {(isOwner(user) || isSalesManager(user)) && path === '/sales/admin/employees' ? (
             <SalesEmployeesSection
               form={salesEmployeeForm}
               onSubmit={handleSalesEmployeeSubmit}

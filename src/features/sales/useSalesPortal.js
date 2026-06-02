@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { apiRequest } from '../reporting/api'
 import { TOKEN_KEY } from '../reporting/constants'
 import { createEmptySalesEmployeeForm, createEmptySalesOrderForm } from './constants'
-import { isSalesUser, readFileAsDataUrl } from './utils'
+import { isOwner, isSalesManager, isSalesUser, readFileAsDataUrl } from './utils'
 
 export default function useSalesPortal() {
   const location = useLocation()
@@ -47,28 +47,28 @@ export default function useSalesPortal() {
   useEffect(() => {
     if (!user) return
 
-    if (user.role === 'employee' && !isSalesUser(user)) {
+    if (!isSalesUser(user) && !isSalesManager(user) && !isOwner(user)) {
       navigate('/dashboard', { replace: true })
       return
     }
 
     if (location.pathname === '/sales/login') {
-      navigate(user.role === 'admin' ? '/sales/admin/orders' : '/sales/dashboard', { replace: true })
+      navigate(isOwner(user) || isSalesManager(user) ? '/sales/admin/orders' : '/sales/dashboard', { replace: true })
     }
   }, [location.pathname, navigate, user])
 
   useEffect(() => {
     async function loadSalesData() {
-      if (!token || !user || (!isSalesUser(user) && user.role !== 'admin')) {
+      if (!token || !user || (!isSalesUser(user) && !isSalesManager(user) && !isOwner(user))) {
         return
       }
 
       try {
         const dashboardPromise = apiRequest('/sales/dashboard', {}, token)
-        const ordersPromise = user.role === 'admin'
+        const ordersPromise = isOwner(user) || isSalesManager(user)
           ? apiRequest('/sales/orders/all', {}, token)
           : apiRequest('/sales/orders/mine', {}, token)
-        const usersPromise = user.role === 'admin' ? apiRequest('/admin/users', {}, token) : Promise.resolve({ users: [] })
+        const usersPromise = isOwner(user) || isSalesManager(user) ? apiRequest('/admin/users', {}, token) : Promise.resolve({ users: [] })
 
         const [dashboardData, ordersData, usersData] = await Promise.all([dashboardPromise, ordersPromise, usersPromise])
         setDashboard(dashboardData.dashboard || {})
@@ -97,12 +97,12 @@ export default function useSalesPortal() {
       setUser(data.user)
       setCredentials({ email: '', password: '' })
 
-      if (data.user.role === 'employee' && !isSalesUser(data.user)) {
+      if (!isSalesUser(data.user) && !isSalesManager(data.user) && !isOwner(data.user)) {
         navigate('/dashboard', { replace: true })
         return
       }
 
-      navigate(data.user.role === 'admin' ? '/sales/admin/orders' : '/sales/dashboard', { replace: true })
+      navigate(isOwner(data.user) || isSalesManager(data.user) ? '/sales/admin/orders' : '/sales/dashboard', { replace: true })
       toast.success(`Welcome back, ${data.user.name}`)
     } catch (error) {
       toast.error(error.message)
@@ -166,13 +166,13 @@ export default function useSalesPortal() {
         method: 'POST',
         body: {
           ...salesEmployeeForm,
-          role: 'employee',
+          role: salesEmployeeForm.role || 'employee',
           department: 'Sales',
         },
       }, token)
 
       setSalesEmployeeForm(createEmptySalesEmployeeForm())
-      toast.success('Sales employee created')
+      toast.success('Sales user created')
 
       const usersData = await apiRequest('/admin/users', {}, token)
       setSalesUsers(

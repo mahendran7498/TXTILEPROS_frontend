@@ -33,6 +33,7 @@ export const emptyUserForm = {
   role: 'employee',
   employeeCode: '',
   department: 'Service',
+  phone: '',
 }
 
 export function createEmptyLeaveForm() {

@@ -12,9 +12,13 @@ export function readFileAsDataUrl(file) {
 }
 
 export function isSalesUser(user) {
-  return user?.role === 'sales' || (user?.role === 'employee' && normalizeDepartment(user?.department) === 'sales')
+  return user?.role === 'employee' && normalizeDepartment(user?.department) === 'sales'
 }
 
 export function isOwner(user) {
   return user?.role === 'admin'
+}
+
+export function isSalesManager(user) {
+  return user?.role === 'manager' && normalizeDepartment(user?.department) === 'sales'
 }

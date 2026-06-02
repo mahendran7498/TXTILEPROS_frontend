@@ -31,11 +31,13 @@ export function TopCornerActions({ showAuthButtons, onLoginClick, onRegisterClic
 }
 
 export function DashboardHeader({ user, weekStart, setWeekStart, refresh, onLogout }) {
+  const isManagementUser = user.role === 'admin' || user.role === 'manager'
+
   return (
     <header className="dashboard-header">
       <div>
         <div className="eyebrow">Secure reporting workspace</div>
-        <h2>{user.role === 'admin' ? 'Admin dashboard' : 'Employee dashboard'}</h2>
+        <h2>{isManagementUser ? 'Management dashboard' : 'Employee dashboard'}</h2>
         <p className="muted">
           Signed in as {user.name} ({user.role}){user.department ? ` | ${user.department}` : ''}
         </p>
