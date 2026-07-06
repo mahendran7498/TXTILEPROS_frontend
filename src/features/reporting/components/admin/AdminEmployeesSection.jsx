@@ -8,11 +8,26 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
   const safeCurrentPage = Math.min(currentPage, totalPages)
   const paginatedUsers = users.slice((safeCurrentPage - 1) * PAGE_SIZE, safeCurrentPage * PAGE_SIZE)
 
+  function handleRoleChange(role) {
+    setForm((current) => ({
+      ...current,
+      role,
+      department: current.department || 'Service',
+    }))
+  }
+
+  function handleDepartmentChange(department) {
+    setForm((current) => ({
+      ...current,
+      department,
+    }))
+  }
+
   return (
     <>
       <AdminSectionIntro
         aside={<span className="status-pill status-completed">{users.length} team members</span>}
-        description="Create accounts, assign roles, and enable or disable employee access without leaving the dashboard."
+        description="Create employee or manager accounts, then enable or disable access without leaving the dashboard."
         eyebrow="Access control"
         title="Manage employees"
       />
@@ -32,14 +47,22 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
             <label className="field"><span>Password</span><input required type="password" value={form.password} onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))} /></label>
             <label className="field">
               <span>Role</span>
-              <select value={form.role} onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))}>
+              <select value={form.role} onChange={(event) => handleRoleChange(event.target.value)}>
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
                 <option value="owner">Owner</option>
+                <option value="manager">Manager</option>
               </select>
             </label>
             <label className="field"><span>Employee code</span><input value={form.employeeCode} onChange={(event) => setForm((current) => ({ ...current, employeeCode: event.target.value }))} /></label>
-            <label className="field"><span>Department</span><input value={form.department} onChange={(event) => setForm((current) => ({ ...current, department: event.target.value }))} /></label>
+            <label className="field"><span>Phone</span><input value={form.phone || ''} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} /></label>
+            <label className="field">
+              <span>Department</span>
+              <select value={form.department} onChange={(event) => handleDepartmentChange(event.target.value)}>
+                <option value="Service">Service</option>
+                <option value="Sales">Sales</option>
+              </select>
+            </label>
             <button className="primary-button field-wide" disabled={saving} type="submit">{saving ? 'Saving user...' : 'Create user'}</button>
           </form>
         </section>

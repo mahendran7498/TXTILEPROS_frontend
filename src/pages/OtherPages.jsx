@@ -1,5 +1,5 @@
 // ── ABOUT PAGE ──────────────────────────────────────────────────────────────
-import { motion } from 'framer-motion'
+import { Motion } from 'framer-Motion'
 import { Link } from 'react-router-dom'
 
 function PageHero({ title, subtitle, crumb }) {
@@ -40,7 +40,7 @@ export function About() {
       {/* Intro */}
       <section style={{ background: 'var(--white)', padding: '100px 32px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }} className="about-resp">
-          <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          <Motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
             <span className="section-label">Our Story</span>
             <h2 className="section-title">From Vision to Industry Leadership</h2>
             <p style={{ fontSize: 16, color: '#4a5568', lineHeight: 1.8, marginBottom: 20 }}>
@@ -52,8 +52,8 @@ export function About() {
             <p style={{ fontSize: 16, color: '#4a5568', lineHeight: 1.8 }}>
               Today, with 200+ Air Jet Looms installed across Tamil Nadu and Karnataka, TXTILPROS stands as a leading textile machinery company in South India — and we're just getting started.
             </p>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+          </Motion.div>
+          <Motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
             <div style={{ background: 'var(--navy)', borderRadius: 20, padding: 40 }}>
               <h3 style={{ fontFamily: 'var(--font-head)', fontSize: 28, color: 'white', letterSpacing: 1, marginBottom: 32 }}>OUR JOURNEY</h3>
               {timeline.map((t, i) => (
@@ -68,7 +68,7 @@ export function About() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </Motion.div>
           <style>{`@media(max-width:1024px){ .about-resp { grid-template-columns:1fr !important; gap:40px !important; } }`}</style>
         </div>
       </section>
@@ -82,12 +82,12 @@ export function About() {
               { label: '🔭 Vision', title: 'Our Vision', text: 'To become the most trusted textile machinery solution provider in India, known for integrity, expertise, and innovation.' },
               { label: '💎 Values', title: 'Our Values', text: 'Honesty in every transaction. Genuine parts always. Technical excellence as standard. Long-term partnerships over short-term gains.' },
             ].map((mv, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
+              <Motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
                 style={{ background: 'white', borderRadius: 16, padding: 36, boxShadow: 'var(--shadow)', borderTop: '3px solid var(--orange)' }}>
                 <div style={{ fontSize: 32, marginBottom: 16 }}>{mv.label.split(' ')[0]}</div>
                 <h3 style={{ fontFamily: 'var(--font-head)', fontSize: 24, color: 'var(--navy)', letterSpacing: 1, marginBottom: 12 }}>{mv.title}</h3>
                 <p style={{ fontSize: 15, color: '#4a5568', lineHeight: 1.7 }}>{mv.text}</p>
-              </motion.div>
+              </Motion.div>
             ))}
             <style>{`@media(max-width:768px){ .mv-grid { grid-template-columns:1fr !important; } }`}</style>
           </div>
@@ -101,7 +101,7 @@ export function About() {
           <h2 className="section-title light">Expert People Behind TXTILPROS</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24, marginTop: 48 }} className="team-grid">
             {team.map((m, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              <Motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: 28, textAlign: 'center' }}>
                 <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontFamily: 'var(--font-head)', fontSize: 28, color: 'white' }}>
                   {m.role[0]}
@@ -109,7 +109,7 @@ export function About() {
                 <h4 style={{ fontSize: 15, fontWeight: 700, color: 'white', marginBottom: 6 }}>{m.role}</h4>
                 <div style={{ fontSize: 12, color: 'var(--orange)', fontWeight: 600, marginBottom: 4 }}>{m.exp} Experience</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>{m.spec}</div>
-              </motion.div>
+              </Motion.div>
             ))}
             <style>{`@media(max-width:768px){ .team-grid { grid-template-columns:1fr 1fr !important; } }`}</style>
           </div>
@@ -174,7 +174,7 @@ export function Services() {
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 60 }}>
             {services.map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              <Motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 60, alignItems: 'start', paddingBottom: 60, borderBottom: i < services.length - 1 ? '1px solid var(--light)' : 'none' }} className="svc-detail-resp"
               >
                 <div>
@@ -205,7 +205,7 @@ export function Services() {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
           <style>{`@media(max-width:768px){ .svc-detail-resp { grid-template-columns:1fr !important; gap:32px !important; } }`}</style>
@@ -236,12 +236,12 @@ export function Projects() {
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24, marginBottom: 80 }} className="pstats-grid">
             {stats.map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              <Motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 style={{ background: 'white', borderRadius: 14, padding: '32px 24px', textAlign: 'center', boxShadow: 'var(--shadow)', borderTop: '3px solid var(--orange)' }}>
                 <div style={{ fontSize: 36, marginBottom: 8 }}>{s.icon}</div>
                 <div style={{ fontFamily: 'var(--font-head)', fontSize: 52, color: 'var(--navy)', letterSpacing: 1, lineHeight: 1 }}>{s.num}</div>
                 <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 8, fontWeight: 500 }}>{s.label}</div>
-              </motion.div>
+              </Motion.div>
             ))}
             <style>{`@media(max-width:768px){ .pstats-grid { grid-template-columns:1fr 1fr !important; } }`}</style>
           </div>
@@ -252,7 +252,7 @@ export function Projects() {
               { state: 'Tamil Nadu', num: '120+', cities: ['Coimbatore', 'Erode', 'Tirupur', 'Salem', 'Karur'], desc: 'Strong presence across the textile heartland of South India.' },
               { state: 'Karnataka', num: '80+', cities: ['Bengaluru', 'Davangere', 'Hubballi', 'Raichur'], desc: 'Expanding footprint in Karnataka\'s growing textile sector.' },
             ].map((r, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: i === 0 ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              <Motion.div key={i} initial={{ opacity: 0, x: i === 0 ? -20 : 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
                 style={{ background: 'white', borderRadius: 14, padding: 32, boxShadow: 'var(--shadow)', borderLeft: '4px solid var(--orange)' }}>
                 <h3 style={{ fontFamily: 'var(--font-head)', fontSize: 28, color: 'var(--navy)', letterSpacing: 1 }}>{r.state}</h3>
                 <div style={{ fontFamily: 'var(--font-head)', fontSize: 52, color: 'var(--orange)', lineHeight: 1, margin: '8px 0' }}>{r.num}</div>
@@ -260,7 +260,7 @@ export function Projects() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {r.cities.map(c => <span key={c} className="badge">{c}</span>)}
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
             <style>{`@media(max-width:768px){ .region-resp { grid-template-columns:1fr !important; } }`}</style>
           </div>
@@ -270,7 +270,7 @@ export function Projects() {
           <h2 className="section-title">Project Highlights</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginTop: 40 }} className="case-grid">
             {caseStudies.map((cs, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              <Motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 style={{ background: 'var(--navy)', borderRadius: 14, padding: 32, color: 'white' }}>
                 <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
                   <div style={{ textAlign: 'center' }}>
@@ -286,7 +286,7 @@ export function Projects() {
                 <div style={{ background: 'rgba(244,115,32,0.15)', border: '1px solid rgba(244,115,32,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--orange)', fontWeight: 600 }}>
                   ✓ {cs.outcome}
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
             <style>{`@media(max-width:768px){ .case-grid { grid-template-columns:1fr !important; } }`}</style>
           </div>
@@ -332,7 +332,7 @@ export function Gallery() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, gridAutoRows: '200px' }} className="gallery-grid-resp">
             {filtered.map((item, i) => (
-              <motion.div key={`${active}-${i}`} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
+              <Motion.div key={`${active}-${i}`} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
                 style={{ gridColumn: item.wide ? 'span 2' : 'span 1', gridRow: item.tall ? 'span 2' : 'span 1', borderRadius: 12, overflow: 'hidden', position: 'relative', cursor: 'pointer', background: item.bg }}
                 className="gallery-cell"
               >
@@ -342,7 +342,7 @@ export function Gallery() {
                 <div className="gal-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,22,40,0.8),transparent)', opacity: 0, display: 'flex', alignItems: 'flex-end', padding: 16, transition: 'opacity 0.3s' }}>
                   <span style={{ color: 'white', fontSize: 13, fontWeight: 600 }}>{item.label}</span>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
           <style>{`
@@ -385,7 +385,7 @@ export function Blog() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 28 }} className="blog-grid-resp">
             {filtered.map((post, i) => (
-              <motion.div key={`${activeCat}-${i}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+              <Motion.div key={`${activeCat}-${i}`} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
                 style={{ background: 'var(--off-white)', borderRadius: 14, overflow: 'hidden', cursor: 'pointer', transition: 'all 0.3s' }}
                 whileHover={{ y: -6, boxShadow: '0 20px 60px rgba(10,22,40,0.15)' }}
               >
@@ -401,7 +401,7 @@ export function Blog() {
                   <p style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.6, marginBottom: 20 }}>{post.excerpt}</p>
                   <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--orange)', display: 'flex', alignItems: 'center', gap: 6 }}>Read More →</div>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
           <style>{`@media(max-width:1024px){ .blog-grid-resp { grid-template-columns:1fr 1fr !important; } } @media(max-width:640px){ .blog-grid-resp { grid-template-columns:1fr !important; } }`}</style>
@@ -441,7 +441,7 @@ export function Products() {
       <section style={{ background: 'var(--white)', padding: '100px 32px' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center', marginBottom: 80 }} className="prod-resp">
-            <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            <Motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
               style={{ background: 'var(--navy)', borderRadius: 20, padding: 48, minHeight: 400, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', inset: 0, background: 'conic-gradient(from 0deg, transparent 70%, rgba(244,115,32,0.04) 100%)', animation: 'rotate 20s linear infinite' }} />
               <svg viewBox="0 0 300 300" fill="none" style={{ width: '100%', maxWidth: 300, position: 'relative', zIndex: 1 }}>
@@ -456,8 +456,8 @@ export function Products() {
                 <text x="150" y="290" textAnchor="middle" fill="rgba(244,115,32,0.8)" fontSize="13" fontFamily="'Bebas Neue', sans-serif" letterSpacing="3">RED FLAG AIR JET LOOM</text>
               </svg>
               <style>{`@keyframes rotate { to { transform:rotate(360deg); } }`}</style>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+            </Motion.div>
+            <Motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
               <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 48, color: 'var(--navy)', letterSpacing: 2, lineHeight: 1, marginBottom: 8 }}>RED FLAG<br />AIR JET LOOM</h1>
               <div style={{ fontSize: 16, color: 'var(--orange)', fontWeight: 600, marginBottom: 20 }}>High-Performance Weaving Technology</div>
               <p style={{ fontSize: 15, color: '#4a5568', lineHeight: 1.8, marginBottom: 28 }}>
@@ -482,7 +482,7 @@ export function Products() {
                 <Link to="/contact" className="btn btn-primary">Request Quote</Link>
                 <Link to="/contact" className="btn btn-dark">Download Brochure</Link>
               </div>
-            </motion.div>
+            </Motion.div>
             <style>{`@media(max-width:1024px){ .prod-resp { grid-template-columns:1fr !important; gap:40px !important; } }`}</style>
           </div>
 
@@ -492,14 +492,14 @@ export function Products() {
             <h2 className="section-title" style={{ fontSize: 36 }}>Spare Parts & Accessories</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 20, marginTop: 40 }} className="parts-grid">
               {parts.map((p, i) => (
-                <motion.div key={i} whileHover={{ background: 'var(--navy)', y: -4 }}
+                <Motion.div key={i} whileHover={{ background: 'var(--navy)', y: -4 }}
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                   style={{ background: 'var(--off-white)', borderRadius: 'var(--radius)', padding: 24, textAlign: 'center', transition: 'all 0.3s', cursor: 'pointer' }}
                 >
                   <div style={{ width: 48, height: 48, background: 'var(--orange)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 22 }}>{p.icon}</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--navy)', marginBottom: 4 }}>{p.name}</div>
                   <div style={{ fontSize: 12, color: 'var(--gray)' }}>{p.sub}</div>
-                </motion.div>
+                </Motion.div>
               ))}
               <style>{`@media(max-width:768px){ .parts-grid { grid-template-columns:1fr 1fr !important; } }`}</style>
             </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { Motion } from 'framer-Motion'
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaPaperPlane, FaWhatsapp } from 'react-icons/fa'
 import toast from 'react-hot-toast'
 import axios from 'axios'
@@ -77,7 +77,7 @@ export default function Contact() {
             </div>
 
             {/* Form */}
-            <motion.form
+            <Motion.form
               onSubmit={handleSubmit}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -135,7 +135,7 @@ export default function Contact() {
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 24, flexWrap: 'wrap', gap: 12 }}>
                 <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>We respond within 24 hours</span>
-                <motion.button
+                <Motion.button
                   type="submit"
                   disabled={loading}
                   whileHover={{ scale: 1.02 }}
@@ -143,9 +143,9 @@ export default function Contact() {
                   style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 28px', borderRadius: 8, background: 'var(--orange)', color: 'white', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 700, opacity: loading ? 0.7 : 1 }}
                 >
                   <FaPaperPlane /> {loading ? 'Sending...' : 'Send Message'}
-                </motion.button>
+                </Motion.button>
               </div>
-            </motion.form>
+            </Motion.form>
           </div>
         </div>
       </section>

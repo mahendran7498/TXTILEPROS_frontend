@@ -2,8 +2,24 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { apiDownload, apiRequest } from './api'
-import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
+import { createEmptyLeaveForm, createEmptyReportForm, createReportFormFromReport, emptyUserForm, TOKEN_KEY } from './constants'
 import { getLocalMonthInputValue, getWeekStartValue } from './utils'
+
+function isSalesDepartment(user) {
+  return String(user?.department || '').trim().toLowerCase().includes('sales')
+}
+
+function isOwner(user) {
+  return user?.role === 'admin'
+}
+
+function isServiceManager(user) {
+  return user?.role === 'manager' && !isSalesDepartment(user)
+}
+
+function canAccessServiceManagement(user) {
+  return isOwner(user) || isServiceManager(user)
+}
 
 export default function useReportingPortal() {
   const navigate = useNavigate()
@@ -27,6 +43,7 @@ export default function useReportingPortal() {
   const [selectedReport, setSelectedReport] = useState(null)
   const [selectedReportLoading, setSelectedReportLoading] = useState(false)
   const [form, setForm] = useState(() => createEmptyReportForm())
+  const [editingReportId, setEditingReportId] = useState('')
   const [leaveForm, setLeaveForm] = useState(() => createEmptyLeaveForm())
   const [userForm, setUserForm] = useState(emptyUserForm)
   const [editSalaryForm, setEditSalaryForm] = useState({})
@@ -39,7 +56,7 @@ export default function useReportingPortal() {
   const [salarySavingId, setSalarySavingId] = useState('')
   const [salaryHistoryLoadingId, setSalaryHistoryLoadingId] = useState('')
 
-  const isAdminUser = user?.role === 'admin' || user?.role === 'owner'
+  const isAdminUser = canAccessServiceManagement(user)
   const pageTitle = isAdminUser ? 'Admin Operations Hub' : 'Field Reporting Workspace'
 
   useEffect(() => {
@@ -69,16 +86,16 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     if (user && location.pathname === '/login') {
-      navigate(isAdminUser ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
     }
   }, [isAdminUser, location.pathname, navigate, user])
 
   useEffect(() => {
     if (!user) return
-    if (isAdminUser && location.pathname === '/dashboard') {
+    if (user.role === 'admin' && location.pathname === '/dashboard') {
       navigate('/dashboard/admin', { replace: true })
     }
-    if (!isAdminUser && location.pathname.startsWith('/dashboard/admin')) {
+    if (user.role !== 'admin' && location.pathname.startsWith('/dashboard/admin')) {
       navigate('/dashboard', { replace: true })
     }
   }, [isAdminUser, location.pathname, navigate, user])
@@ -87,7 +104,7 @@ export default function useReportingPortal() {
     if (!token || !user) return
 
     try {
-      if (isAdminUser) {
+      if (user.role === 'admin') {
         if (location.pathname === '/dashboard/admin') {
           const [dashboardData, reportsData] = await Promise.all([
             apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
@@ -180,7 +197,7 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     async function loadSelectedReport() {
-      if (!token || !isAdminUser || !reportId) {
+      if (!token || user?.role !== 'admin' || !reportId) {
         setSelectedReport(null)
         setSelectedReportLoading(false)
         return
@@ -221,7 +238,7 @@ export default function useReportingPortal() {
       setUser(data.user)
       setCredentials({ email: '', password: '' })
       toast.success(`Welcome back, ${data.user.name}`)
-      navigate(data.user.role === 'admin' || data.user.role === 'owner' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(data.user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -240,15 +257,31 @@ export default function useReportingPortal() {
         throw new Error('Please upload at least one before-work photo and one after-work photo.')
       }
 
-      await apiRequest('/reports', { method: 'POST', body: { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) } }, token)
+      const payload = { ...form, photos, hoursWorked: Number(form.hoursWorked || 0) }
+      if (editingReportId) {
+        await apiRequest(`/reports/${editingReportId}`, { method: 'PATCH', body: payload }, token)
+      } else {
+        await apiRequest('/reports', { method: 'POST', body: payload }, token)
+      }
       setForm(createEmptyReportForm())
-      toast.success('Work report saved')
+      setEditingReportId('')
+      toast.success(editingReportId ? 'Work report updated' : 'Work report saved')
       await refreshDashboard()
     } catch (error) {
       toast.error(error.message)
     } finally {
       setSubmitting(false)
     }
+  }
+
+  function handleEditReport(report) {
+    setForm(createReportFormFromReport(report))
+    setEditingReportId(String(report._id || ''))
+  }
+
+  function handleCancelReportEdit() {
+    setForm(createEmptyReportForm())
+    setEditingReportId('')
   }
 
   async function handleUserSubmit(event) {
@@ -425,9 +458,12 @@ export default function useReportingPortal() {
     dashboard,
     editSalaryForm,
     form,
+    editingReportId,
     handleLeaveDecision,
+    handleEditReport,
     handleLogin,
     handleLogout,
+    handleCancelReportEdit,
     handleLeaveSubmit,
     handleReportSubmit,
     handleEmployeePayslipDownload,

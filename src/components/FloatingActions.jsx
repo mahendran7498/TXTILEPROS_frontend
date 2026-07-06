@@ -1,5 +1,5 @@
 import { FaWhatsapp, FaPhone } from 'react-icons/fa'
-import { motion } from 'framer-motion'
+import { Motion } from 'framer-Motion'
 
 export default function FloatingActions() {
   return (
@@ -7,7 +7,7 @@ export default function FloatingActions() {
       position: 'fixed', bottom: 32, right: 24, zIndex: 900,
       display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end'
     }}>
-      <motion.a
+      <Motion.a
         href="https://wa.me/919876543210"
         target="_blank"
         rel="noopener noreferrer"
@@ -23,8 +23,8 @@ export default function FloatingActions() {
       >
         <FaWhatsapp size={18} />
         <span className="float-label">WhatsApp</span>
-      </motion.a>
-      <motion.a
+      </Motion.a>
+      <Motion.a
         href="tel:+919876543210"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -38,7 +38,7 @@ export default function FloatingActions() {
       >
         <FaPhone size={16} />
         <span className="float-label">Call Now</span>
-      </motion.a>
+      </Motion.a>
       <style>{`
         @media (max-width: 768px) {
           .float-label { display: none; }

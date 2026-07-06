@@ -1,10 +1,19 @@
 import { Toaster, toast } from 'react-hot-toast'
 import Footer from '../../components/Footer'
+import AccessDeniedPanel from '../../components/AccessDeniedPanel'
 import AdminDashboard from './components/AdminDashboard'
 import EmployeeDashboard from './components/EmployeeDashboard'
 import LoginScreen from './components/LoginScreen'
 import { DashboardHeader, TopCornerActions } from './components/SharedReportingUi'
 import useReportingPortal from './useReportingPortal'
+
+function isSalesDepartment(user) {
+  return String(user?.department || '').trim().toLowerCase().includes('sales')
+}
+
+function canAccessServiceManagement(user) {
+  return user?.role === 'admin' || (user?.role === 'manager' && !isSalesDepartment(user))
+}
 
 export default function ReportingPortalPage() {
   const {
@@ -17,9 +26,12 @@ export default function ReportingPortalPage() {
     dashboard,
     editSalaryForm,
     form,
+    editingReportId,
     handleLeaveDecision,
+    handleEditReport,
     handleLogin,
     handleLogout,
+    handleCancelReportEdit,
     handleLeaveSubmit,
     handleReportSubmit,
     handleEmployeePayslipDownload,
@@ -83,6 +95,10 @@ export default function ReportingPortalPage() {
     )
   }
 
+  if (isSalesDepartment(user)) {
+    return <AccessDeniedPanel message="Sales users cannot access the service module." />
+  }
+
   return (
     <>
       <Toaster position="top-right" />
@@ -93,7 +109,7 @@ export default function ReportingPortalPage() {
         <section className="hero-panel">
           <DashboardHeader onLogout={handleLogout} refresh={refreshDashboard} setWeekStart={setWeekStart} user={user} weekStart={weekStart} />
 
-          {user.role === 'admin' || user.role === 'owner' ? (
+          {canAccessServiceManagement(user) ? (
             <AdminDashboard
               activePath={adminSectionPath}
               attendance={attendance}
@@ -135,10 +151,13 @@ export default function ReportingPortalPage() {
           ) : (
             <EmployeeDashboard
               form={form}
+              editingReportId={editingReportId}
               leaveForm={leaveForm}
               leaveSubmitting={leaveSubmitting}
               leaves={leaves}
               salaries={salaries}
+              onCancelReportEdit={handleCancelReportEdit}
+              onEditReport={handleEditReport}
               onLeaveSubmit={handleLeaveSubmit}
               onPayslipDownload={handleEmployeePayslipDownload}
               onSubmit={handleReportSubmit}

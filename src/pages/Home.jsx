@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { Motion } from 'framer-Motion'
 import { FaPhone, FaCogs, FaWrench, FaHeadset, FaProjectDiagram, FaChartLine, FaBoxes, FaCertificate, FaGlobeAsia, FaMapMarkerAlt, FaClock, FaRupeeSign, FaFileContract, FaWhatsapp } from 'react-icons/fa'
 
 const stats = [
@@ -53,7 +53,7 @@ const whyVisual = [
 
 function FadeUp({ children, delay = 0, style = {} }) {
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -61,7 +61,7 @@ function FadeUp({ children, delay = 0, style = {} }) {
       style={style}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }
 
@@ -76,7 +76,7 @@ export default function Home() {
         <div style={{ position: 'absolute', right: -100, top: -100, width: 700, height: 700, borderRadius: '50%', background: 'radial-gradient(circle, rgba(244,115,32,0.15) 0%, transparent 70%)', zIndex: 0 }} />
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1280, margin: '0 auto', padding: '72px 32px 0', width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }} className="hero-grid">
-          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+          <Motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(244,115,32,0.15)', border: '1px solid rgba(244,115,32,0.3)', padding: '6px 14px', borderRadius: 100, fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--orange)', marginBottom: 24 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--orange)', animation: 'pulse 2s infinite', display: 'block' }} />
               Established 2014 · Tamil Nadu & Karnataka
@@ -94,17 +94,17 @@ export default function Home() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 48 }}>
               {stats.map((s, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
+                <Motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
                   style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 'var(--radius)', padding: 20, backdropFilter: 'blur(10px)' }}>
                   <div style={{ fontFamily: 'var(--font-head)', fontSize: 40, color: 'var(--orange)', letterSpacing: 1, lineHeight: 1 }}>{s.num}</div>
                   <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 6 }}>{s.label}</div>
-                </motion.div>
+                </Motion.div>
               ))}
             </div>
-          </motion.div>
+          </Motion.div>
 
           {/* Hero visual */}
-          <motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} className="hero-visual">
+          <Motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} className="hero-visual">
             <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 32, backdropFilter: 'blur(12px)' }}>
               <div style={{ width: '100%', height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg viewBox="0 0 200 200" fill="none" style={{ width: 180, height: 180 }}>
@@ -132,7 +132,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
 
         <style>{`
@@ -218,7 +218,7 @@ export default function Home() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24, marginTop: 60 }} className="svc-grid-resp">
             {services.map((s, i) => (
               <FadeUp key={i} delay={i * 0.1}>
-                <motion.div
+                <Motion.div
                   whileHover={{ y: -4 }}
                   style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '36px 28px', cursor: 'default', transition: 'background 0.3s' }}
                 >
@@ -234,7 +234,7 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                </motion.div>
+                </Motion.div>
               </FadeUp>
             ))}
           </div>
@@ -283,7 +283,7 @@ export default function Home() {
           </FadeUp>
         </div>
         <div style={{ marginTop: 60, overflow: 'hidden' }}>
-          <motion.div
+          <Motion.div
             animate={{ x: [0, -50 + '%'] }}
             transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
             style={{ display: 'flex', gap: 24, width: 'max-content' }}
@@ -301,7 +301,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </motion.div>
+          </Motion.div>
         </div>
       </section>
 

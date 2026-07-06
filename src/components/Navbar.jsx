@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Motion, AnimatePresence } from 'framer-Motion'
 import { FaBars, FaTimes } from 'react-icons/fa'
 
 const navItems = [
@@ -100,7 +100,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       <AnimatePresence>
         {open && (
-          <motion.div
+          <Motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -123,7 +123,7 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
 
