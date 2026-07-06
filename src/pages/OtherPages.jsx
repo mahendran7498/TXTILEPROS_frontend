@@ -1,5 +1,5 @@
 // ── ABOUT PAGE ──────────────────────────────────────────────────────────────
-import { Motion } from 'framer-Motion'
+import { motion as Motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
 function PageHero({ title, subtitle, crumb }) {

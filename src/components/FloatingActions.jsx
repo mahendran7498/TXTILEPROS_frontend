@@ -1,5 +1,5 @@
 import { FaWhatsapp, FaPhone } from 'react-icons/fa'
-import { Motion } from 'framer-Motion'
+import { motion as Motion } from 'framer-motion'
 
 export default function FloatingActions() {
   return (

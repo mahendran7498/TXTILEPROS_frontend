@@ -1,6 +1,5 @@
-import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Motion } from 'framer-Motion'
+import { motion as Motion } from 'framer-motion'
 import { FaPhone, FaCogs, FaWrench, FaHeadset, FaProjectDiagram, FaChartLine, FaBoxes, FaCertificate, FaGlobeAsia, FaMapMarkerAlt, FaClock, FaRupeeSign, FaFileContract, FaWhatsapp } from 'react-icons/fa'
 
 const stats = [

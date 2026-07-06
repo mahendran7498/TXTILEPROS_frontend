@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Motion } from 'framer-Motion'
+import { motion as Motion } from 'framer-motion'
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaPaperPlane, FaWhatsapp } from 'react-icons/fa'
 import toast from 'react-hot-toast'
 import axios from 'axios'
