@@ -31,3 +31,25 @@ export async function apiRequest(path, options = {}, token) {
   if (!response.ok) throw new Error(data.error || 'Request failed')
   return data
 }
+
+export async function apiDownload(path, filename, token) {
+  const response = await fetch(`${API_URL}${path}`, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  })
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data.error || 'Download failed')
+  }
+
+  const blob = await response.blob()
+  const href = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = href
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(href)
+}

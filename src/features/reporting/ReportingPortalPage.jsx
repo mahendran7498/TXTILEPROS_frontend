@@ -11,15 +11,25 @@ export default function ReportingPortalPage() {
     adminSectionPath,
     attendance,
     attendanceMonth,
+    auditLogsBySalary,
     authLoading,
     credentials,
     dashboard,
+    editSalaryForm,
     form,
     handleLeaveDecision,
     handleLogin,
     handleLogout,
     handleLeaveSubmit,
     handleReportSubmit,
+    handleEmployeePayslipDownload,
+    handleSalaryApprove,
+    handleSalaryDownload,
+    handleSalaryEditChange,
+    handleSalaryGeneratePayslip,
+    handleSalaryHistoryLoad,
+    handleSalaryResendEmail,
+    handleSalarySave,
     handleUserSubmit,
     handleUserToggle,
     isAuthenticated,
@@ -32,12 +42,20 @@ export default function ReportingPortalPage() {
     refreshDashboard,
     reportId,
     reports,
+    salaries,
+    salaryHistoryLoadingId,
+    salaryMonth,
+    salarySavingId,
+    salaryStatus,
     selectedReport,
     selectedReportLoading,
     setCredentials,
     setAttendanceMonth,
+    setEditSalaryForm,
     setForm,
     setLeaveForm,
+    setSalaryMonth,
+    setSalaryStatus,
     setUserForm,
     setWeekStart,
     submitting,
@@ -75,13 +93,22 @@ export default function ReportingPortalPage() {
         <section className="hero-panel">
           <DashboardHeader onLogout={handleLogout} refresh={refreshDashboard} setWeekStart={setWeekStart} user={user} weekStart={weekStart} />
 
-          {user.role === 'admin' ? (
+          {user.role === 'admin' || user.role === 'owner' ? (
             <AdminDashboard
               activePath={adminSectionPath}
               attendance={attendance}
               attendanceMonth={attendanceMonth}
+              auditLogsBySalary={auditLogsBySalary}
               dashboard={dashboard}
+              editSalaryForm={editSalaryForm}
               handleLeaveDecision={handleLeaveDecision}
+              handleSalaryApprove={handleSalaryApprove}
+              handleSalaryDownload={handleSalaryDownload}
+              handleSalaryEditChange={handleSalaryEditChange}
+              handleSalaryGeneratePayslip={handleSalaryGeneratePayslip}
+              handleSalaryHistoryLoad={handleSalaryHistoryLoad}
+              handleSalaryResendEmail={handleSalaryResendEmail}
+              handleSalarySave={handleSalarySave}
               handleUserSubmit={handleUserSubmit}
               handleUserToggle={handleUserToggle}
               leaveActionLoadingId={leaveActionLoadingId}
@@ -89,9 +116,17 @@ export default function ReportingPortalPage() {
               locationPath={locationPath}
               reportId={reportId}
               reports={reports}
+              salaries={salaries}
+              salaryHistoryLoadingId={salaryHistoryLoadingId}
+              salaryMonth={salaryMonth}
+              salarySavingId={salarySavingId}
+              salaryStatus={salaryStatus}
               selectedReport={selectedReport}
               selectedReportLoading={selectedReportLoading}
               setAttendanceMonth={setAttendanceMonth}
+              setEditSalaryForm={setEditSalaryForm}
+              setSalaryMonth={setSalaryMonth}
+              setSalaryStatus={setSalaryStatus}
               setUserForm={setUserForm}
               userForm={userForm}
               userSaving={userSaving}
@@ -103,7 +138,9 @@ export default function ReportingPortalPage() {
               leaveForm={leaveForm}
               leaveSubmitting={leaveSubmitting}
               leaves={leaves}
+              salaries={salaries}
               onLeaveSubmit={handleLeaveSubmit}
+              onPayslipDownload={handleEmployeePayslipDownload}
               onSubmit={handleReportSubmit}
               reports={reports}
               setForm={setForm}

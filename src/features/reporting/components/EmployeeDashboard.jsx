@@ -309,10 +309,62 @@ function LeaveList({ leaves }) {
   )
 }
 
+function formatSalaryMonth(salary) {
+  return new Date(salary.year, Number(salary.month || 1) - 1, 1).toLocaleDateString(undefined, {
+    month: 'long',
+    year: 'numeric',
+  })
+}
+
+function PayslipList({ salaries, onDownload }) {
+  return (
+    <section className="glass-card section-card employee-panel">
+      <div className="section-head employee-section-head">
+        <div>
+          <div className="eyebrow">Payslips</div>
+          <h3>Your approved payslips</h3>
+          <p className="muted">Download salary PDFs after admin approval and payslip generation.</p>
+        </div>
+        <div className="employee-inline-metrics">
+          <span className="status-pill status-completed">{salaries.length} payslips</span>
+        </div>
+      </div>
+
+      {salaries.length === 0 ? (
+        <div className="empty-state">No approved payslips available yet.</div>
+      ) : (
+        <div className="leave-list">
+          {salaries.map((salary) => (
+            <article className="leave-card" key={salary._id}>
+              <div className="report-topline">
+                <div>
+                  <h4>{formatSalaryMonth(salary)}</h4>
+                  <p className="muted">Generated {salary.generatedDate ? new Date(salary.generatedDate).toLocaleDateString() : '-'}</p>
+                </div>
+                <span className={`status-pill status-${salary.paymentStatus || 'pending'}`}>{salary.paymentStatus || 'pending'}</span>
+              </div>
+              <p><strong>Present Days:</strong> {salary.presentDays || 0}</p>
+              <p><strong>Absent Days:</strong> {salary.absentDays || 0}</p>
+              <p><strong>Net Salary:</strong> {Number(salary.netSalary || 0).toLocaleString('en-IN')}</p>
+              <div className="report-footer">
+                <span>Email: {salary.emailDeliveryStatus || 'pending'}</span>
+                <button className="secondary-button inline-button" type="button" onClick={() => onDownload(salary)}>
+                  Download PDF
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
 export default function EmployeeDashboard({
   summary,
   reports,
   leaves,
+  salaries,
   form,
   leaveForm,
   setForm,
@@ -321,6 +373,7 @@ export default function EmployeeDashboard({
   leaveSubmitting,
   onSubmit,
   onLeaveSubmit,
+  onPayslipDownload,
 }) {
   const [activeSection, setActiveSection] = useState('reports')
   const attendance = summary.attendance || {}
@@ -368,6 +421,13 @@ export default function EmployeeDashboard({
           >
             Leave
           </button>
+          <button
+            className={`employee-subnav-link${activeSection === 'payslips' ? ' active' : ''}`}
+            onClick={() => setActiveSection('payslips')}
+            type="button"
+          >
+            Payslips
+          </button>
         </div>
       </nav>
 
@@ -384,6 +444,8 @@ export default function EmployeeDashboard({
           <LeaveList leaves={leaves} />
         </div>
       ) : null}
+
+      {activeSection === 'payslips' ? <PayslipList salaries={salaries} onDownload={onPayslipDownload} /> : null}
     </>
   )
 }

@@ -782,6 +782,89 @@ a {
 .status-leave { color: #0d7ea2; background: rgba(13, 126, 162, 0.12); }
 .status-comp-off { color: #135a96; background: rgba(19, 90, 150, 0.14); }
 .status-holiday { color: #7b2cbf; background: rgba(123, 44, 191, 0.12); }
+.status-paid { color: var(--primary); background: rgba(31, 107, 79, 0.12); }
+.status-unpaid { color: var(--danger); background: rgba(163, 57, 57, 0.14); }
+
+.salary-toolbar {
+  min-width: 460px;
+}
+
+.salary-filter-row,
+.salary-action-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.salary-status-field {
+  min-width: 150px;
+  flex: 1;
+}
+
+.salary-table {
+  min-width: 1080px;
+}
+
+.salary-mini-pill {
+  display: inline-flex;
+  margin-left: 6px;
+}
+
+.salary-action-row .inline-button {
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.salary-details {
+  display: grid;
+  gap: 18px;
+  padding: 18px 0 6px;
+}
+
+.salary-detail-grid,
+.salary-edit-form {
+  display: grid;
+  gap: 14px;
+}
+
+.salary-detail-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.salary-detail-panel {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.salary-detail-panel p {
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+.salary-edit-form {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.salary-history {
+  display: grid;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.salary-history h4 {
+  margin: 6px 0 0;
+}
+
+.salary-history-table {
+  min-width: 820px;
+}
 
 .report-photos,
 .photo-preview-grid {
@@ -915,6 +998,10 @@ a {
     min-width: 100%;
   }
 
+  .salary-toolbar {
+    min-width: 100%;
+  }
+
   .employee-section-intro {
     flex-direction: column;
     align-items: flex-start;
@@ -922,7 +1009,7 @@ a {
 
   .employee-subnav-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .employee-subnav-link {
@@ -959,6 +1046,11 @@ a {
   .attendance-weekday-row,
   .attendance-month-grid {
     min-width: 620px;
+  }
+
+  .salary-detail-grid,
+  .salary-edit-form {
+    grid-template-columns: 1fr;
   }
 
   .header-actions { width: 100%; }

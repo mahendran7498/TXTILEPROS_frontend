@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { apiRequest } from './api'
+import { apiDownload, apiRequest } from './api'
 import { createEmptyLeaveForm, createEmptyReportForm, emptyUserForm, TOKEN_KEY } from './constants'
 import { getLocalMonthInputValue, getWeekStartValue } from './utils'
 
@@ -14,8 +14,12 @@ export default function useReportingPortal() {
   const [credentials, setCredentials] = useState({ email: '', password: '' })
   const [weekStart, setWeekStart] = useState(getWeekStartValue())
   const [attendanceMonth, setAttendanceMonth] = useState(getLocalMonthInputValue())
+  const [salaryMonth, setSalaryMonth] = useState(getLocalMonthInputValue())
+  const [salaryStatus, setSalaryStatus] = useState('')
   const [reports, setReports] = useState([])
   const [leaves, setLeaves] = useState([])
+  const [salaries, setSalaries] = useState([])
+  const [auditLogsBySalary, setAuditLogsBySalary] = useState({})
   const [summary, setSummary] = useState({})
   const [dashboard, setDashboard] = useState({})
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
@@ -25,14 +29,18 @@ export default function useReportingPortal() {
   const [form, setForm] = useState(() => createEmptyReportForm())
   const [leaveForm, setLeaveForm] = useState(() => createEmptyLeaveForm())
   const [userForm, setUserForm] = useState(emptyUserForm)
+  const [editSalaryForm, setEditSalaryForm] = useState({})
   const [authLoading, setAuthLoading] = useState(false)
   const [pageLoading, setPageLoading] = useState(Boolean(token))
   const [submitting, setSubmitting] = useState(false)
   const [leaveSubmitting, setLeaveSubmitting] = useState(false)
   const [leaveActionLoadingId, setLeaveActionLoadingId] = useState('')
   const [userSaving, setUserSaving] = useState(false)
+  const [salarySavingId, setSalarySavingId] = useState('')
+  const [salaryHistoryLoadingId, setSalaryHistoryLoadingId] = useState('')
 
-  const pageTitle = user?.role === 'admin' ? 'Admin Operations Hub' : 'Field Reporting Workspace'
+  const isAdminUser = user?.role === 'admin' || user?.role === 'owner'
+  const pageTitle = isAdminUser ? 'Admin Operations Hub' : 'Field Reporting Workspace'
 
   useEffect(() => {
     document.title = `TXTILPROS | ${pageTitle}`
@@ -61,25 +69,25 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     if (user && location.pathname === '/login') {
-      navigate(user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(isAdminUser ? '/dashboard/admin' : '/dashboard', { replace: true })
     }
-  }, [location.pathname, navigate, user])
+  }, [isAdminUser, location.pathname, navigate, user])
 
   useEffect(() => {
     if (!user) return
-    if (user.role === 'admin' && location.pathname === '/dashboard') {
+    if (isAdminUser && location.pathname === '/dashboard') {
       navigate('/dashboard/admin', { replace: true })
     }
-    if (user.role !== 'admin' && location.pathname.startsWith('/dashboard/admin')) {
+    if (!isAdminUser && location.pathname.startsWith('/dashboard/admin')) {
       navigate('/dashboard', { replace: true })
     }
-  }, [location.pathname, navigate, user])
+  }, [isAdminUser, location.pathname, navigate, user])
 
   async function refreshDashboard() {
     if (!token || !user) return
 
     try {
-      if (user.role === 'admin') {
+      if (isAdminUser) {
         if (location.pathname === '/dashboard/admin') {
           const [dashboardData, reportsData] = await Promise.all([
             apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
@@ -100,6 +108,14 @@ export default function useReportingPortal() {
         if (location.pathname === '/dashboard/admin/leaves') {
           const leavesData = await apiRequest('/admin/leaves', {}, token)
           setLeaves(leavesData.leaves || [])
+          return
+        }
+
+        if (location.pathname === '/dashboard/admin/salaries') {
+          const query = new URLSearchParams({ month: salaryMonth })
+          if (salaryStatus) query.set('status', salaryStatus)
+          const salaryData = await apiRequest(`/salaries?${query.toString()}`, {}, token)
+          setSalaries(salaryData.salaries || [])
           return
         }
 
@@ -139,15 +155,17 @@ export default function useReportingPortal() {
         return
       }
 
-      const [summaryData, reportsData, leavesData] = await Promise.all([
+      const [summaryData, reportsData, leavesData, salaryData] = await Promise.all([
         apiRequest(`/reports/weekly-summary?weekStart=${weekStart}`, {}, token),
         apiRequest(`/reports/mine?weekStart=${weekStart}`, {}, token),
         apiRequest('/leaves/mine', {}, token),
+        apiRequest('/salaries/mine', {}, token),
       ])
 
       setSummary(summaryData.summary || {})
       setReports(reportsData.reports || [])
       setLeaves(leavesData.leaves || [])
+      setSalaries(salaryData.salaries || [])
       setAttendance({ daily: [], employees: [] })
     } catch (error) {
       toast.error(error.message)
@@ -158,11 +176,11 @@ export default function useReportingPortal() {
     if (user) {
       refreshDashboard()
     }
-  }, [attendanceMonth, location.pathname, user, weekStart])
+  }, [attendanceMonth, isAdminUser, location.pathname, salaryMonth, salaryStatus, user, weekStart])
 
   useEffect(() => {
     async function loadSelectedReport() {
-      if (!token || user?.role !== 'admin' || !reportId) {
+      if (!token || !isAdminUser || !reportId) {
         setSelectedReport(null)
         setSelectedReportLoading(false)
         return
@@ -190,7 +208,7 @@ export default function useReportingPortal() {
     }
 
     loadSelectedReport()
-  }, [reportId, reports, token, user])
+  }, [isAdminUser, reportId, reports, token, user])
 
   async function handleLogin(event) {
     event.preventDefault()
@@ -203,7 +221,7 @@ export default function useReportingPortal() {
       setUser(data.user)
       setCredentials({ email: '', password: '' })
       toast.success(`Welcome back, ${data.user.name}`)
-      navigate(data.user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(data.user.role === 'admin' || data.user.role === 'owner' ? '/dashboard/admin' : '/dashboard', { replace: true })
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -289,12 +307,106 @@ export default function useReportingPortal() {
     }
   }
 
+  function handleSalaryEditChange(field, value) {
+    setEditSalaryForm((current) => ({ ...current, [field]: value }))
+  }
+
+  async function handleSalarySave(event, salary) {
+    event.preventDefault()
+    setSalarySavingId(salary._id)
+
+    try {
+      const data = await apiRequest(`/salaries/${salary._id}`, { method: 'PATCH', body: editSalaryForm }, token)
+      setSalaries((current) => current.map((item) => (item._id === salary._id ? data.salary : item)))
+      toast.success('Salary updated and net salary recalculated')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSalarySavingId('')
+    }
+  }
+
+  async function handleSalaryApprove(salary) {
+    setSalarySavingId(salary._id)
+
+    try {
+      const data = await apiRequest(`/salaries/${salary._id}/approve`, { method: 'POST' }, token)
+      setSalaries((current) => current.map((item) => (item._id === salary._id ? data.salary : item)))
+      toast.success('Salary approved')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSalarySavingId('')
+    }
+  }
+
+  async function handleSalaryGeneratePayslip(salary) {
+    setSalarySavingId(salary._id)
+
+    try {
+      const data = await apiRequest(`/salaries/${salary._id}/generate-payslip`, { method: 'POST' }, token)
+      setSalaries((current) => current.map((item) => (item._id === salary._id ? data.salary : item)))
+      toast.success('Payslip generated')
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSalarySavingId('')
+    }
+  }
+
+  async function handleSalaryResendEmail(salary) {
+    setSalarySavingId(salary._id)
+
+    try {
+      const data = await apiRequest(`/salaries/${salary._id}/resend-email`, { method: 'POST' }, token)
+      setSalaries((current) => current.map((item) => (item._id === salary._id ? data.salary : item)))
+      toast.success(data.salary.emailDeliveryStatus === 'sent' ? 'Payslip email sent' : `Email ${data.salary.emailDeliveryStatus}`)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSalarySavingId('')
+    }
+  }
+
+  async function handleSalaryHistoryLoad(salaryId) {
+    setSalaryHistoryLoadingId(salaryId)
+
+    try {
+      const data = await apiRequest(`/salaries/${salaryId}/audit-logs`, {}, token)
+      setAuditLogsBySalary((current) => ({ ...current, [salaryId]: data.logs || [] }))
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setSalaryHistoryLoadingId('')
+    }
+  }
+
+  async function handleSalaryDownload(salary) {
+    try {
+      const monthName = new Date(salary.year, salary.month - 1, 1).toLocaleDateString('en-US', { month: 'long' })
+      await apiDownload(`/salaries/${salary._id}/payslip`, `SalarySlip_${monthName}_${salary.year}.pdf`, token)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  async function handleEmployeePayslipDownload(salary) {
+    try {
+      const monthName = new Date(salary.year, salary.month - 1, 1).toLocaleDateString('en-US', { month: 'long' })
+      await apiDownload(`/salaries/mine/${salary._id}/payslip`, `SalarySlip_${monthName}_${salary.year}.pdf`, token)
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   function handleLogout() {
     localStorage.removeItem(TOKEN_KEY)
     setToken('')
     setUser(null)
     setReports([])
     setLeaves([])
+    setSalaries([])
+    setAuditLogsBySalary({})
     setUsers([])
     setSummary({})
     setDashboard({})
@@ -307,15 +419,25 @@ export default function useReportingPortal() {
     adminSectionPath: reportId ? '/dashboard/admin/reports' : location.pathname,
     attendance,
     attendanceMonth,
+    auditLogsBySalary,
     authLoading,
     credentials,
     dashboard,
+    editSalaryForm,
     form,
     handleLeaveDecision,
     handleLogin,
     handleLogout,
     handleLeaveSubmit,
     handleReportSubmit,
+    handleEmployeePayslipDownload,
+    handleSalaryApprove,
+    handleSalaryDownload,
+    handleSalaryEditChange,
+    handleSalaryGeneratePayslip,
+    handleSalaryHistoryLoad,
+    handleSalaryResendEmail,
+    handleSalarySave,
     handleUserSubmit,
     handleUserToggle,
     isAuthenticated: Boolean(token && user),
@@ -328,12 +450,20 @@ export default function useReportingPortal() {
     refreshDashboard,
     reportId,
     reports,
+    salaries,
+    salaryHistoryLoadingId,
+    salaryMonth,
+    salarySavingId,
+    salaryStatus,
     selectedReport,
     selectedReportLoading,
     setCredentials,
     setForm,
     setAttendanceMonth,
+    setEditSalaryForm,
     setLeaveForm,
+    setSalaryMonth,
+    setSalaryStatus,
     setUserForm,
     setWeekStart,
     submitting,

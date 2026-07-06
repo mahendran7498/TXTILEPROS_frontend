@@ -74,6 +74,7 @@ export function AdminNavigation({ activePath }) {
     { label: 'Overview', path: '/dashboard/admin' },
     { label: 'Attendance', path: '/dashboard/admin/attendance' },
     { label: 'Leaves', path: '/dashboard/admin/leaves' },
+    { label: 'Salaries', path: '/dashboard/admin/salaries' },
     { label: 'Reports', path: '/dashboard/admin/reports' },
     { label: 'Employees', path: '/dashboard/admin/employees' },
   ]

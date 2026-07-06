@@ -35,6 +35,7 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
               <select value={form.role} onChange={(event) => setForm((current) => ({ ...current, role: event.target.value }))}>
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
+                <option value="owner">Owner</option>
               </select>
             </label>
             <label className="field"><span>Employee code</span><input value={form.employeeCode} onChange={(event) => setForm((current) => ({ ...current, employeeCode: event.target.value }))} /></label>
