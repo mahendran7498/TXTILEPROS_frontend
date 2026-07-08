@@ -55,10 +55,10 @@ export default function Contact() {
                 Whether you're planning a new weaving unit, expanding your existing operation, or need urgent machine support — we're just a call away.
               </p>
               {[
-                { icon: <FaMapMarkerAlt />, title: 'Address', content: 'TXTILPROS Machinery Solutions\nCoimbatore, Tamil Nadu, India' },
-                { icon: <FaPhone />, title: 'Phone', content: '+91 98765 43210' },
-                { icon: <FaEnvelope />, title: 'Email', content: 'info@txtilpros.com' },
-                { icon: <FaClock />, title: 'Working Hours', content: 'Mon – Sat: 9:00 AM – 6:00 PM\nEmergency: 24/7' },
+                { icon: <FaMapMarkerAlt />, title: 'Address', content: 'TXTILPROS MARKETING AND SERVICE\n97A, Jagannatha Nagar, 1st floor, Opp. Coimbatore Medical College, Civil Aerodrome Post, Coimbatore - 641014, Tamil Nadu, India' },
+                { icon: <FaPhone />, title: 'Phone', content: '+91 95970 57918' },
+                { icon: <FaEnvelope />, title: 'Email', content: 'office.txtilepros@gmail.com' },
+                { icon: <FaClock />, title: 'Working Hours', content: 'Mon – Sat: 9:30 AM – 6:00 PM\nEmergency: 24/7' },
               ].map((d, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 28 }}>
                   <div style={{ width: 48, height: 48, background: 'rgba(244,115,32,0.15)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--orange)', fontSize: 18 }}>
@@ -158,10 +158,10 @@ export default function Contact() {
             <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, marginTop: 4 }}>Our engineers are available 24/7 for emergency breakdowns</div>
           </div>
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-            <a href="tel:+919876543210" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'white', color: 'var(--orange)', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
+            <a href="tel:+919597057918" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'white', color: 'var(--orange)', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
               <FaPhone /> Call Now
             </a>
-            <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14, border: '2px solid rgba(255,255,255,0.3)' }}>
+            <a href="https://wa.me/919597057918" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: 'rgba(255,255,255,0.15)', color: 'white', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14, border: '2px solid rgba(255,255,255,0.3)' }}>
               <FaWhatsapp /> WhatsApp
             </a>
           </div>

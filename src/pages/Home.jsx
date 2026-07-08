@@ -3,14 +3,14 @@ import { motion as Motion } from 'framer-motion'
 import { FaPhone, FaCogs, FaWrench, FaHeadset, FaProjectDiagram, FaChartLine, FaBoxes, FaCertificate, FaGlobeAsia, FaMapMarkerAlt, FaClock, FaRupeeSign, FaFileContract, FaWhatsapp } from 'react-icons/fa'
 
 const stats = [
-  { num: '200+', label: 'Looms Installed' },
+  { num: '1200+', label: 'Looms Installed' },
   { num: '20+', label: 'Years Experience' },
   { num: '2', label: 'States Covered' },
   { num: '24/7', label: 'After-Sales Support' },
 ]
 
 const highlights = [
-  { icon: <FaCogs size={28} />, num: '200+', label: 'Air Jet Looms Installed' },
+  { icon: <FaCogs size={28} />, num: '1200+', label: 'Air Jet Looms Installed' },
   { icon: <FaCertificate size={28} />, num: '20+', label: 'Years of Industry Experience' },
   { icon: <FaHeadset size={28} />, num: 'Expert', label: 'Engineers Team' },
   { icon: <FaPhone size={28} />, num: '24/7', label: 'After-Sales Support' },
@@ -78,13 +78,13 @@ export default function Home() {
           <Motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(244,115,32,0.15)', border: '1px solid rgba(244,115,32,0.3)', padding: '6px 14px', borderRadius: 100, fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--orange)', marginBottom: 24 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--orange)', animation: 'pulse 2s infinite', display: 'block' }} />
-              Established 2014 · Tamil Nadu & Karnataka
+              Established 2014 · Tamil Nadu
             </div>
             <h1 style={{ fontFamily: 'var(--font-head)', fontSize: 'clamp(52px,5.5vw,86px)', color: 'white', letterSpacing: 3, lineHeight: 0.95, marginBottom: 8 }}>
-              LEADING<br />TEXTILE<br /><span style={{ color: 'var(--orange)' }}>MACHINERY</span><br />EXPERTS
+              <br />TXTILPROS<br /><span style={{ color: 'var(--orange)' }}>MARKETING</span><br />SERVICES
             </h1>
             <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', margin: '20px 0 40px', lineHeight: 1.7, maxWidth: 480 }}>
-              Trusted Air Jet Loom Solutions Since 2014. Red Flag authorized dealer with 200+ installations across South India.
+              Trusted Air Jet Loom Solutions Since 2014. Red Flag authorized dealer with 1200+ installations across South India.
             </p>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <Link to="/login" className="btn btn-outline">Employee Login</Link>
@@ -173,7 +173,7 @@ export default function Home() {
               </div>
             </div>
             <div style={{ background: 'var(--orange)', borderRadius: 12, padding: '20px 24px', color: 'white', display: 'inline-block', marginTop: 20, boxShadow: 'var(--shadow-lg)' }}>
-              <div style={{ fontFamily: 'var(--font-head)', fontSize: 36, letterSpacing: 1, lineHeight: 1 }}>200+</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontSize: 36, letterSpacing: 1, lineHeight: 1 }}>1200+</div>
               <div style={{ fontSize: 12, fontWeight: 500, opacity: 0.85, marginTop: 2 }}>Looms Sold & Installed</div>
             </div>
           </FadeUp>
@@ -317,7 +317,7 @@ export default function Home() {
             <Link to="/contact" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'white', color: 'var(--orange)', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14, transition: 'all 0.2s' }}>
               <FaPhone /> Call Us Today
             </Link>
-            <a href="https://wa.me/919876543210" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.5)', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
+            <a href="https://wa.me/919597057918" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.5)', borderRadius: 8, textDecoration: 'none', fontWeight: 700, fontSize: 14 }}>
               <FaWhatsapp /> WhatsApp Us
             </a>
           </div>

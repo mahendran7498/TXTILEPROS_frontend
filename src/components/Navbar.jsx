@@ -47,8 +47,8 @@ export default function Navbar() {
               </svg>
             </div>
             <div style={{ color: 'white' }}>
-              <div style={{ fontFamily: 'var(--font-head)', fontSize: 24, letterSpacing: 2, lineHeight: 1 }}>TXTILPROS</div>
-              <div style={{ fontSize: 9, letterSpacing: 3, color: 'var(--orange)', fontWeight: 600, textTransform: 'uppercase' }}>Textile Machinery Experts</div>
+              <div style={{ fontFamily: 'var(--font-head)', fontSize: 26, letterSpacing: 2, lineHeight: 1 }}>TXTILPROS</div>
+              <div style={{ fontSize: 8, letterSpacing: 3, color: 'var(--orange)', fontWeight: 600, textTransform: 'uppercase' }}> Marketing Services</div>
             </div>
           </Link>
 

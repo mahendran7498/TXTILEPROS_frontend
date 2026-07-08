@@ -24,7 +24,7 @@ export function About() {
     { year: '2014', event: 'TXTILPROS founded in Coimbatore, Tamil Nadu' },
     { year: '2015', event: 'Became authorized Red Flag Air Jet Loom dealer' },
     { year: '2017', event: 'Crossed 50 loom installations across Tamil Nadu' },
-    { year: '2019', event: 'Expanded operations into Karnataka' },
+    {/* year: '2019', event: 'Expanded operations into Karnataka'*/ },
     { year: '2021', event: 'Launched dedicated AMC service contracts' },
     { year: '2023', event: 'Crossed 200+ Air Jet Loom installations milestone' },
   ]
@@ -50,7 +50,7 @@ export function About() {
               Starting as a small team of passionate textile engineers, we quickly earned the trust of mill owners through our honest dealings, technical competence, and genuine commitment to after-sales support. Within a year, we became authorized dealers for Red Flag — one of China's most reputed loom manufacturers.
             </p>
             <p style={{ fontSize: 16, color: '#4a5568', lineHeight: 1.8 }}>
-              Today, with 200+ Air Jet Looms installed across Tamil Nadu and Karnataka, TXTILPROS stands as a leading textile machinery company in South India — and we're just getting started.
+              Today, with 1200+ Air Jet Looms installed across Tamil Nadu , TXTILPROS stands as a leading textile machinery company in South India — and we're just getting started.
             </p>
           </Motion.div>
           <Motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
@@ -218,7 +218,7 @@ export function Services() {
 // ── PROJECTS PAGE ─────────────────────────────────────────────────────────────
 export function Projects() {
   const stats = [
-    { num: '200+', label: 'Air Jet Looms Installed', icon: '🏭' },
+    { num: '1200+', label: 'Air Jet Looms Installed', icon: '🏭' },
     { num: '2', label: 'States Covered', icon: '📍' },
     { num: '12', label: 'Years in Operation', icon: '📅' },
     { num: '100+', label: 'Happy Clients', icon: '🤝' },

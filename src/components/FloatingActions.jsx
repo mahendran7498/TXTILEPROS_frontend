@@ -8,7 +8,7 @@ export default function FloatingActions() {
       display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end'
     }}>
       <Motion.a
-        href="https://wa.me/919876543210"
+        href="https://wa.me/919597057918"
         target="_blank"
         rel="noopener noreferrer"
         whileHover={{ scale: 1.05 }}
@@ -25,7 +25,7 @@ export default function FloatingActions() {
         <span className="float-label">WhatsApp</span>
       </Motion.a>
       <Motion.a
-        href="tel:+919876543210"
+        href="tel:+919597057918"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         style={{
