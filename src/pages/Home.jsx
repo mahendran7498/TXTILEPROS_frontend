@@ -5,7 +5,7 @@ import { FaPhone, FaCogs, FaWrench, FaHeadset, FaProjectDiagram, FaChartLine, Fa
 const stats = [
   { num: '1200+', label: 'Looms Installed' },
   { num: '20+', label: 'Years Experience' },
-  { num: '2', label: 'States Covered' },
+  { num: '100%', label: 'Tamil Nadu Covered' },
   { num: '24/7', label: 'After-Sales Support' },
 ]
 
@@ -167,7 +167,7 @@ export default function Home() {
                 Founded in 2014, TXTILPROS has grown to become a trusted name in textile machinery solutions across South India.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 24 }}>
-                {['Red Flag Authorized Dealer', 'Tamil Nadu', 'Karnataka'].map(b => (
+                {['Red Flag Authorized Dealer', 'Tamil Nadu', ].map(b => (
                   <span key={b} className="badge">{b}</span>
                 ))}
               </div>
