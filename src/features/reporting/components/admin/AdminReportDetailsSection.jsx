@@ -3,7 +3,7 @@ import { getPhotoSrc, normalizeReportPhotos } from '../../utils'
 import { ReportPhotoGrid } from '../SharedReportingUi'
 import AdminSectionIntro from './AdminSectionIntro'
 
-export default function AdminReportDetailsSection({ loading, report }) {
+export default function AdminReportDetailsSection({ basePath, loading, report }) {
   if (loading) {
     if (report) {
       return (
@@ -46,7 +46,7 @@ export default function AdminReportDetailsSection({ loading, report }) {
         </div>
         <p className="muted">Try selecting a different week or go back to the reports list.</p>
         <div style={{ marginTop: 16 }}>
-          <Link className="secondary-button" to="/dashboard/admin/reports">
+          <Link className="secondary-button" to={`${basePath}/reports`}>
             Back to reports
           </Link>
         </div>
@@ -77,7 +77,7 @@ export default function AdminReportDetailsSection({ loading, report }) {
               {new Date(report.workDate).toLocaleDateString()} | {report.shift} | {report.hoursWorked} hrs
             </p>
           </div>
-          <Link className="secondary-button" to="/dashboard/admin/reports">
+          <Link className="secondary-button" to={`${basePath}/reports`}>
             Back to reports
           </Link>
         </div>

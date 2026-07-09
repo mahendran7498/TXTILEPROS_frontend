@@ -36,6 +36,12 @@ export default function App() {
       <Route path="/login" element={<ReportingPortal />} />
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/dashboard" element={<ReportingPortal />} />
+      <Route path="/dashboard/attendance" element={<ReportingPortal />} />
+      <Route path="/dashboard/leaves" element={<ReportingPortal />} />
+      <Route path="/dashboard/salaries" element={<ReportingPortal />} />
+      <Route path="/dashboard/reports" element={<ReportingPortal />} />
+      <Route path="/dashboard/reports/:reportId" element={<ReportingPortal />} />
+      <Route path="/dashboard/employees" element={<ReportingPortal />} />
       <Route path="/dashboard/admin" element={<ReportingPortal />} />
       <Route path="/dashboard/admin/attendance" element={<ReportingPortal />} />
       <Route path="/dashboard/admin/leaves" element={<ReportingPortal />} />

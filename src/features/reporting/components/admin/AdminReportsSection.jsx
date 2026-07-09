@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AdminPagination, { PAGE_SIZE } from './AdminPagination'
 
-export default function AdminReportsSection({ reports, title = 'All employee submissions', subtitle = 'Review weekly work reports and open any report for full details.' }) {
+export default function AdminReportsSection({ basePath, reports, title = 'All employee submissions', subtitle = 'Review weekly work reports and open any report for full details.' }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const normalizedSearch = searchTerm.trim().toLowerCase()
@@ -82,7 +82,7 @@ export default function AdminReportsSection({ reports, title = 'All employee sub
                     <td><span className={`status-pill status-${report.status}`}>{report.status.replace('-', ' ')}</span></td>
                     <td>{report.hoursWorked || 0}</td>
                     <td>
-                      <Link className="ghost-button inline-button" to={`/dashboard/admin/reports/${report._id}`}>
+                      <Link className="ghost-button inline-button" to={`${basePath}/reports/${report._id}`}>
                         View
                       </Link>
                     </td>

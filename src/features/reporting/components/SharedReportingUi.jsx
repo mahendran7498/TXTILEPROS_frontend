@@ -32,6 +32,7 @@ export function TopCornerActions({ showAuthButtons, onLoginClick, onRegisterClic
 
 export function DashboardHeader({ user, weekStart, setWeekStart, refresh, onLogout }) {
   const isManagementUser = user.role === 'admin' || user.role === 'manager'
+  const canOpenSalesModule = user.role === 'admin'
 
   return (
     <header className="dashboard-header">
@@ -47,6 +48,11 @@ export function DashboardHeader({ user, weekStart, setWeekStart, refresh, onLogo
           <span>Week starting</span>
           <input type="date" value={weekStart} onChange={(event) => setWeekStart(event.target.value)} />
         </label>
+        {canOpenSalesModule ? (
+          <Link className="secondary-button" to="/sales/admin/orders">
+            Sales Module
+          </Link>
+        ) : null}
         <button className="secondary-button" onClick={refresh} type="button">
           Refresh
         </button>
@@ -71,15 +77,18 @@ export function ReportPhotoGrid({ photos }) {
   )
 }
 
-export function AdminNavigation({ activePath }) {
+export function AdminNavigation({ activePath, basePath, showSalaries }) {
   const items = [
-    { label: 'Overview', path: '/dashboard/admin' },
-    { label: 'Attendance', path: '/dashboard/admin/attendance' },
-    { label: 'Leaves', path: '/dashboard/admin/leaves' },
-    { label: 'Salaries', path: '/dashboard/admin/salaries' },
-    { label: 'Reports', path: '/dashboard/admin/reports' },
-    { label: 'Employees', path: '/dashboard/admin/employees' },
+    { label: 'Overview', path: basePath },
+    { label: 'Attendance', path: `${basePath}/attendance` },
+    { label: 'Leaves', path: `${basePath}/leaves` },
+    { label: 'Reports', path: `${basePath}/reports` },
+    { label: 'Employees', path: `${basePath}/employees` },
   ]
+
+  if (showSalaries) {
+    items.splice(3, 0, { label: 'Salaries', path: `${basePath}/salaries` })
+  }
 
   return (
     <nav className="glass-card section-card admin-nav-shell">

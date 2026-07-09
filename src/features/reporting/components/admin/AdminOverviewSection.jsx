@@ -2,7 +2,7 @@ import { StatCard } from '../SharedReportingUi'
 import AdminSectionIntro from './AdminSectionIntro'
 import AdminReportsSection from './AdminReportsSection'
 
-export default function AdminOverviewSection({ dashboard, reports }) {
+export default function AdminOverviewSection({ basePath, dashboard, reports }) {
   return (
     <>
       <AdminSectionIntro
@@ -20,6 +20,7 @@ export default function AdminOverviewSection({ dashboard, reports }) {
         <StatCard label="Rejected leaves" value={dashboard.rejectedLeaves || 0} hint="Closed without approval" />
       </section>
       <AdminReportsSection
+        basePath={basePath}
         reports={reports.slice(0, 6)}
         title="Latest company reports"
         subtitle="Recent employee submissions shown in the same format as the reports section."

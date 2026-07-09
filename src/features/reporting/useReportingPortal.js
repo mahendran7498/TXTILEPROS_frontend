@@ -21,6 +21,20 @@ function canAccessServiceManagement(user) {
   return isOwner(user) || isServiceManager(user)
 }
 
+function getManagementBasePath(user) {
+  return isOwner(user) ? '/dashboard/admin' : '/dashboard'
+}
+
+function getManagementSectionPath(pathname, user) {
+  if (!canAccessServiceManagement(user)) return pathname
+
+  const basePath = getManagementBasePath(user)
+  if (pathname === '/dashboard/admin' || pathname === '/dashboard') return basePath
+  if (pathname.startsWith('/dashboard/admin/')) return `${basePath}${pathname.slice('/dashboard/admin'.length)}`
+  if (pathname.startsWith('/dashboard/')) return `${basePath}${pathname.slice('/dashboard'.length)}`
+  return pathname
+}
+
 export default function useReportingPortal() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -57,6 +71,8 @@ export default function useReportingPortal() {
   const [salaryHistoryLoadingId, setSalaryHistoryLoadingId] = useState('')
 
   const isAdminUser = canAccessServiceManagement(user)
+  const managementBasePath = getManagementBasePath(user)
+  const managementSectionPath = getManagementSectionPath(location.pathname, user)
   const pageTitle = isAdminUser ? 'Admin Operations Hub' : 'Field Reporting Workspace'
 
   useEffect(() => {
@@ -86,9 +102,9 @@ export default function useReportingPortal() {
 
   useEffect(() => {
     if (user && location.pathname === '/login') {
-      navigate(user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(getManagementBasePath(user), { replace: true })
     }
-  }, [isAdminUser, location.pathname, navigate, user])
+  }, [location.pathname, navigate, user])
 
   useEffect(() => {
     if (!user) return
@@ -96,16 +112,19 @@ export default function useReportingPortal() {
       navigate('/dashboard/admin', { replace: true })
     }
     if (user.role !== 'admin' && location.pathname.startsWith('/dashboard/admin')) {
+      navigate(location.pathname.replace('/dashboard/admin', '/dashboard') || '/dashboard', { replace: true })
+    }
+    if (user.role !== 'admin' && location.pathname === '/dashboard/salaries') {
       navigate('/dashboard', { replace: true })
     }
-  }, [isAdminUser, location.pathname, navigate, user])
+  }, [location.pathname, navigate, user])
 
   async function refreshDashboard() {
     if (!token || !user) return
 
-    try {
-      if (user.role === 'admin') {
-        if (location.pathname === '/dashboard/admin') {
+      try {
+      if (canAccessServiceManagement(user)) {
+        if (managementSectionPath === managementBasePath) {
           const [dashboardData, reportsData] = await Promise.all([
             apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
             apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
@@ -116,19 +135,19 @@ export default function useReportingPortal() {
           return
         }
 
-        if (location.pathname === '/dashboard/admin/attendance') {
+        if (managementSectionPath === `${managementBasePath}/attendance`) {
           const attendanceData = await apiRequest(`/admin/attendance?month=${attendanceMonth}`, {}, token)
           setAttendance(attendanceData.attendance || { daily: [], employees: [] })
           return
         }
 
-        if (location.pathname === '/dashboard/admin/leaves') {
+        if (managementSectionPath === `${managementBasePath}/leaves`) {
           const leavesData = await apiRequest('/admin/leaves', {}, token)
           setLeaves(leavesData.leaves || [])
           return
         }
 
-        if (location.pathname === '/dashboard/admin/salaries') {
+        if (managementSectionPath === `${managementBasePath}/salaries`) {
           const query = new URLSearchParams({ month: salaryMonth })
           if (salaryStatus) query.set('status', salaryStatus)
           const salaryData = await apiRequest(`/salaries?${query.toString()}`, {}, token)
@@ -136,13 +155,13 @@ export default function useReportingPortal() {
           return
         }
 
-        if (location.pathname === '/dashboard/admin/reports') {
+        if (managementSectionPath === `${managementBasePath}/reports`) {
           const reportsData = await apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token)
           setReports(reportsData.reports || [])
           return
         }
 
-        if (location.pathname.startsWith('/dashboard/admin/reports/')) {
+        if (managementSectionPath.startsWith(`${managementBasePath}/reports/`)) {
           if (!reports.length) {
             const reportsData = await apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token)
             setReports(reportsData.reports || [])
@@ -150,7 +169,7 @@ export default function useReportingPortal() {
           return
         }
 
-        if (location.pathname === '/dashboard/admin/employees') {
+        if (managementSectionPath === `${managementBasePath}/employees`) {
           const usersData = await apiRequest('/admin/users', {}, token)
           setUsers(usersData.users || [])
           return
@@ -193,11 +212,11 @@ export default function useReportingPortal() {
     if (user) {
       refreshDashboard()
     }
-  }, [attendanceMonth, isAdminUser, location.pathname, salaryMonth, salaryStatus, user, weekStart])
+  }, [attendanceMonth, location.pathname, managementBasePath, managementSectionPath, salaryMonth, salaryStatus, user, weekStart])
 
   useEffect(() => {
     async function loadSelectedReport() {
-      if (!token || user?.role !== 'admin' || !reportId) {
+      if (!token || !canAccessServiceManagement(user) || !reportId) {
         setSelectedReport(null)
         setSelectedReportLoading(false)
         return
@@ -238,7 +257,7 @@ export default function useReportingPortal() {
       setUser(data.user)
       setCredentials({ email: '', password: '' })
       toast.success(`Welcome back, ${data.user.name}`)
-      navigate(data.user.role === 'admin' ? '/dashboard/admin' : '/dashboard', { replace: true })
+      navigate(getManagementBasePath(data.user), { replace: true })
     } catch (error) {
       toast.error(error.message)
     } finally {
@@ -449,7 +468,6 @@ export default function useReportingPortal() {
   }
 
   return {
-    adminSectionPath: reportId ? '/dashboard/admin/reports' : location.pathname,
     attendance,
     attendanceMonth,
     auditLogsBySalary,
@@ -482,6 +500,8 @@ export default function useReportingPortal() {
     leaveSubmitting,
     leaves,
     locationPath: location.pathname,
+    managementBasePath,
+    managementSectionPath: reportId ? `${managementBasePath}/reports` : managementSectionPath,
     pageLoading,
     refreshDashboard,
     reportId,

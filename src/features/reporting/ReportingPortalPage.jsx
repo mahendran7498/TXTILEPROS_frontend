@@ -15,9 +15,12 @@ function canAccessServiceManagement(user) {
   return user?.role === 'admin' || (user?.role === 'manager' && !isSalesDepartment(user))
 }
 
+function canViewSalaries(user) {
+  return user?.role === 'admin'
+}
+
 export default function ReportingPortalPage() {
   const {
-    adminSectionPath,
     attendance,
     attendanceMonth,
     auditLogsBySalary,
@@ -50,6 +53,8 @@ export default function ReportingPortalPage() {
     leaveSubmitting,
     leaves,
     locationPath,
+    managementBasePath,
+    managementSectionPath,
     pageLoading,
     refreshDashboard,
     reportId,
@@ -111,10 +116,12 @@ export default function ReportingPortalPage() {
 
           {canAccessServiceManagement(user) ? (
             <AdminDashboard
-              activePath={adminSectionPath}
+              activePath={managementSectionPath}
               attendance={attendance}
               attendanceMonth={attendanceMonth}
               auditLogsBySalary={auditLogsBySalary}
+              basePath={managementBasePath}
+              canViewSalaries={canViewSalaries(user)}
               dashboard={dashboard}
               editSalaryForm={editSalaryForm}
               handleLeaveDecision={handleLeaveDecision}

@@ -311,6 +311,11 @@ export default function SalesPortalPage() {
               <p className="muted">Signed in as {user.name} ({user.role}){user.department ? ` | ${user.department}` : ''}</p>
             </div>
             <div className="header-actions">
+              {isOwner(user) ? (
+                <Link className="secondary-button" to="/dashboard/admin">
+                  Service Module
+                </Link>
+              ) : null}
               <button className="ghost-button" onClick={handleLogout} type="button">Logout</button>
             </div>
           </header>

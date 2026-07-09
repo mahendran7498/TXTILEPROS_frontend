@@ -12,6 +12,8 @@ export default function AdminDashboard({
   attendance,
   attendanceMonth,
   auditLogsBySalary,
+  basePath,
+  canViewSalaries,
   dashboard,
   editSalaryForm,
   handleLeaveDecision,
@@ -47,15 +49,15 @@ export default function AdminDashboard({
 }) {
   return (
     <>
-      <AdminNavigation activePath={activePath} />
-      {locationPath === '/dashboard/admin' ? <AdminOverviewSection dashboard={dashboard} reports={reports} /> : null}
-      {locationPath === '/dashboard/admin/attendance' ? (
+      <AdminNavigation activePath={activePath} basePath={basePath} showSalaries={canViewSalaries} />
+      {activePath === basePath ? <AdminOverviewSection basePath={basePath} dashboard={dashboard} reports={reports} /> : null}
+      {activePath === `${basePath}/attendance` ? (
         <AdminAttendanceSection attendance={attendance} attendanceMonth={attendanceMonth} setAttendanceMonth={setAttendanceMonth} />
       ) : null}
-      {locationPath === '/dashboard/admin/leaves' ? (
+      {activePath === `${basePath}/leaves` ? (
         <AdminLeavesSection leaveActionLoadingId={leaveActionLoadingId} leaves={leaves} onDecision={handleLeaveDecision} />
       ) : null}
-      {locationPath === '/dashboard/admin/salaries' ? (
+      {canViewSalaries && activePath === `${basePath}/salaries` ? (
         <AdminSalariesSection
           auditLogsBySalary={auditLogsBySalary}
           editForm={editSalaryForm}
@@ -76,12 +78,12 @@ export default function AdminDashboard({
           setSalaryStatus={setSalaryStatus}
         />
       ) : null}
-      {locationPath === '/dashboard/admin/reports' ? <AdminReportsSection reports={reports} /> : null}
-      {locationPath === '/dashboard/admin/employees' ? (
+      {activePath === `${basePath}/reports` ? <AdminReportsSection basePath={basePath} reports={reports} /> : null}
+      {activePath === `${basePath}/employees` ? (
         <AdminEmployeesSection form={userForm} onSubmit={handleUserSubmit} onToggle={handleUserToggle} saving={userSaving} setForm={setUserForm} users={users} />
       ) : null}
-      {locationPath.startsWith('/dashboard/admin/reports/') && reportId ? (
-        <AdminReportDetailsSection loading={selectedReportLoading} report={selectedReport} />
+      {locationPath.startsWith(`${basePath}/reports/`) && reportId ? (
+        <AdminReportDetailsSection basePath={basePath} loading={selectedReportLoading} report={selectedReport} />
       ) : null}
     </>
   )
