@@ -77,7 +77,7 @@ export function ReportPhotoGrid({ photos }) {
   )
 }
 
-export function AdminNavigation({ activePath, basePath, showSalaries }) {
+export function AdminNavigation({ activePath, basePath, showMessages, showSalaries }) {
   const items = [
     { label: 'Overview', path: basePath },
     { label: 'Attendance', path: `${basePath}/attendance` },
@@ -88,6 +88,10 @@ export function AdminNavigation({ activePath, basePath, showSalaries }) {
 
   if (showSalaries) {
     items.splice(3, 0, { label: 'Salaries', path: `${basePath}/salaries` })
+  }
+
+  if (showMessages) {
+    items.push({ label: 'Messages', path: `${basePath}/messages` })
   }
 
   return (

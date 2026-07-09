@@ -70,9 +70,17 @@ export default function Contact() {
                   </div>
                 </div>
               ))}
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 32, gap: 12, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
-                <FaMapMarkerAlt size={24} />
-                <span>Google Maps — Coimbatore, Tamil Nadu</span>
+              <div style={{ marginTop: 32, overflow: 'hidden', borderRadius: 12, border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3722.383167560249!2d77.023972!3d11.027291!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTHCsDAxJzM4LjMiTiA3N8KwMDEnMjYuMyJF!5e1!3m2!1sen!2sin!4v1783578923904!5m2!1sen!2sin"
+                  width="100%"
+                  height="260"
+                  style={{ border: 0, display: 'block' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="TXTILEPROS Location"
+                />
               </div>
             </div>
 
@@ -113,8 +121,12 @@ export default function Contact() {
 
               <div style={{ marginTop: 16 }}>
                 <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.5)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>Subject</label>
-                <select name="subject" value={form.subject} onChange={handleChange}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '13px 16px', color: 'white', fontFamily: 'var(--font-body)', fontSize: 14, outline: 'none', cursor: 'pointer' }}
+                <select
+                  className="contact-select"
+                  name="subject"
+                  value={form.subject}
+                  onChange={handleChange}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.06)', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '13px 44px 13px 16px', color: form.subject ? 'white' : 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-body)', fontSize: 14, outline: 'none', cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none', backgroundImage: 'linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.72) 50%), linear-gradient(135deg, rgba(255,255,255,0.72) 50%, transparent 50%)', backgroundPosition: 'calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px)', backgroundSize: '6px 6px, 6px 6px', backgroundRepeat: 'no-repeat' }}
                 >
                   <option value="" disabled>Select inquiry type</option>
                   <option value="purchase">Machine Purchase Inquiry</option>
@@ -171,6 +183,10 @@ export default function Contact() {
       <style>{`
         @media (max-width: 1024px) { .contact-resp { grid-template-columns: 1fr !important; } }
         @media (max-width: 640px) { .form-row-resp { grid-template-columns: 1fr !important; } }
+        .contact-select option {
+          color: #18212b;
+          background: #f7f1e7;
+        }
       `}</style>
     </>
   )

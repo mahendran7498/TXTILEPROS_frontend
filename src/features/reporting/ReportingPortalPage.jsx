@@ -19,12 +19,17 @@ function canViewSalaries(user) {
   return user?.role === 'admin'
 }
 
+function canViewMessages(user) {
+  return user?.role === 'admin'
+}
+
 export default function ReportingPortalPage() {
   const {
     attendance,
     attendanceMonth,
     auditLogsBySalary,
     authLoading,
+    contacts,
     credentials,
     dashboard,
     editSalaryForm,
@@ -35,6 +40,7 @@ export default function ReportingPortalPage() {
     handleLogin,
     handleLogout,
     handleCancelReportEdit,
+    handleContactStatusUpdate,
     handleLeaveSubmit,
     handleReportSubmit,
     handleEmployeePayslipDownload,
@@ -55,6 +61,7 @@ export default function ReportingPortalPage() {
     locationPath,
     managementBasePath,
     managementSectionPath,
+    messageStatusUpdatingId,
     pageLoading,
     refreshDashboard,
     reportId,
@@ -121,9 +128,12 @@ export default function ReportingPortalPage() {
               attendanceMonth={attendanceMonth}
               auditLogsBySalary={auditLogsBySalary}
               basePath={managementBasePath}
+              canViewMessages={canViewMessages(user)}
               canViewSalaries={canViewSalaries(user)}
+              contacts={contacts}
               dashboard={dashboard}
               editSalaryForm={editSalaryForm}
+              handleContactStatusUpdate={handleContactStatusUpdate}
               handleLeaveDecision={handleLeaveDecision}
               handleSalaryApprove={handleSalaryApprove}
               handleSalaryDownload={handleSalaryDownload}
@@ -139,6 +149,7 @@ export default function ReportingPortalPage() {
               locationPath={locationPath}
               reportId={reportId}
               reports={reports}
+              messageStatusUpdatingId={messageStatusUpdatingId}
               salaries={salaries}
               salaryHistoryLoadingId={salaryHistoryLoadingId}
               salaryMonth={salaryMonth}

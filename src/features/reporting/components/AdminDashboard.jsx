@@ -2,6 +2,7 @@ import { AdminNavigation } from './SharedReportingUi'
 import AdminAttendanceSection from './admin/AdminAttendanceSection'
 import AdminEmployeesSection from './admin/AdminEmployeesSection'
 import AdminLeavesSection from './admin/AdminLeavesSection'
+import AdminMessagesSection from './admin/AdminMessagesSection'
 import AdminOverviewSection from './admin/AdminOverviewSection'
 import AdminReportDetailsSection from './admin/AdminReportDetailsSection'
 import AdminReportsSection from './admin/AdminReportsSection'
@@ -13,10 +14,13 @@ export default function AdminDashboard({
   attendanceMonth,
   auditLogsBySalary,
   basePath,
+  canViewMessages,
   canViewSalaries,
+  contacts,
   dashboard,
   editSalaryForm,
   handleLeaveDecision,
+  handleContactStatusUpdate,
   handleSalaryApprove,
   handleSalaryDownload,
   handleSalaryEditChange,
@@ -27,6 +31,7 @@ export default function AdminDashboard({
   locationPath,
   leaveActionLoadingId,
   leaves,
+  messageStatusUpdatingId,
   reportId,
   reports,
   salaries,
@@ -49,7 +54,7 @@ export default function AdminDashboard({
 }) {
   return (
     <>
-      <AdminNavigation activePath={activePath} basePath={basePath} showSalaries={canViewSalaries} />
+      <AdminNavigation activePath={activePath} basePath={basePath} showMessages={canViewMessages} showSalaries={canViewSalaries} />
       {activePath === basePath ? <AdminOverviewSection basePath={basePath} dashboard={dashboard} reports={reports} /> : null}
       {activePath === `${basePath}/attendance` ? (
         <AdminAttendanceSection attendance={attendance} attendanceMonth={attendanceMonth} setAttendanceMonth={setAttendanceMonth} />
@@ -81,6 +86,9 @@ export default function AdminDashboard({
       {activePath === `${basePath}/reports` ? <AdminReportsSection basePath={basePath} reports={reports} /> : null}
       {activePath === `${basePath}/employees` ? (
         <AdminEmployeesSection form={userForm} onSubmit={handleUserSubmit} onToggle={handleUserToggle} saving={userSaving} setForm={setUserForm} users={users} />
+      ) : null}
+      {canViewMessages && activePath === `${basePath}/messages` ? (
+        <AdminMessagesSection messages={contacts} onStatusUpdate={handleContactStatusUpdate} updatingMessageId={messageStatusUpdatingId} />
       ) : null}
       {locationPath.startsWith(`${basePath}/reports/`) && reportId ? (
         <AdminReportDetailsSection basePath={basePath} loading={selectedReportLoading} report={selectedReport} />

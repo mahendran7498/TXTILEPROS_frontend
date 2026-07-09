@@ -54,6 +54,7 @@ export default function useReportingPortal() {
   const [dashboard, setDashboard] = useState({})
   const [attendance, setAttendance] = useState({ daily: [], employees: [] })
   const [users, setUsers] = useState([])
+  const [contacts, setContacts] = useState([])
   const [selectedReport, setSelectedReport] = useState(null)
   const [selectedReportLoading, setSelectedReportLoading] = useState(false)
   const [form, setForm] = useState(() => createEmptyReportForm())
@@ -69,6 +70,7 @@ export default function useReportingPortal() {
   const [userSaving, setUserSaving] = useState(false)
   const [salarySavingId, setSalarySavingId] = useState('')
   const [salaryHistoryLoadingId, setSalaryHistoryLoadingId] = useState('')
+  const [messageStatusUpdatingId, setMessageStatusUpdatingId] = useState('')
 
   const isAdminUser = canAccessServiceManagement(user)
   const managementBasePath = getManagementBasePath(user)
@@ -175,19 +177,34 @@ export default function useReportingPortal() {
           return
         }
 
-        const [dashboardData, reportsData, usersData, attendanceData, leavesData] = await Promise.all([
+        if (isOwner(user) && managementSectionPath === `${managementBasePath}/messages`) {
+          const contactsData = await apiRequest('/contact', {}, token)
+          setContacts(contactsData.contacts || [])
+          return
+        }
+
+        const requests = [
           apiRequest(`/admin/dashboard?weekStart=${weekStart}`, {}, token),
           apiRequest(`/admin/reports?weekStart=${weekStart}`, {}, token),
           apiRequest('/admin/users', {}, token),
           apiRequest(`/admin/attendance?month=${attendanceMonth}`, {}, token),
           apiRequest('/admin/leaves', {}, token),
-        ])
+        ]
+
+        if (isOwner(user)) {
+          requests.push(apiRequest('/contact', {}, token))
+        }
+
+        const [dashboardData, reportsData, usersData, attendanceData, leavesData, contactsData] = await Promise.all(requests)
 
         setDashboard(dashboardData.dashboard || {})
         setReports(reportsData.reports || [])
         setUsers(usersData.users || [])
         setAttendance(attendanceData.attendance || { daily: [], employees: [] })
         setLeaves(leavesData.leaves || [])
+        if (isOwner(user)) {
+          setContacts(contactsData?.contacts || [])
+        }
         return
       }
 
@@ -349,6 +366,20 @@ export default function useReportingPortal() {
     }
   }
 
+  async function handleContactStatusUpdate(contactId, status) {
+    setMessageStatusUpdatingId(contactId)
+
+    try {
+      const updatedContact = await apiRequest(`/contact/${contactId}/status`, { method: 'PATCH', body: { status } }, token)
+      setContacts((current) => current.map((contact) => (contact._id === contactId ? updatedContact : contact)))
+      toast.success(`Message marked ${status}`)
+    } catch (error) {
+      toast.error(error.message)
+    } finally {
+      setMessageStatusUpdatingId('')
+    }
+  }
+
   async function handleUserToggle(targetUser) {
     try {
       await apiRequest(`/admin/users/${targetUser.id || targetUser._id}`, { method: 'PATCH', body: { active: !targetUser.active } }, token)
@@ -458,6 +489,7 @@ export default function useReportingPortal() {
     setReports([])
     setLeaves([])
     setSalaries([])
+    setContacts([])
     setAuditLogsBySalary({})
     setUsers([])
     setSummary({})
@@ -472,6 +504,7 @@ export default function useReportingPortal() {
     attendanceMonth,
     auditLogsBySalary,
     authLoading,
+    contacts,
     credentials,
     dashboard,
     editSalaryForm,
@@ -482,6 +515,7 @@ export default function useReportingPortal() {
     handleLogin,
     handleLogout,
     handleCancelReportEdit,
+    handleContactStatusUpdate,
     handleLeaveSubmit,
     handleReportSubmit,
     handleEmployeePayslipDownload,
@@ -502,6 +536,7 @@ export default function useReportingPortal() {
     locationPath: location.pathname,
     managementBasePath,
     managementSectionPath: reportId ? `${managementBasePath}/reports` : managementSectionPath,
+    messageStatusUpdatingId,
     pageLoading,
     refreshDashboard,
     reportId,
