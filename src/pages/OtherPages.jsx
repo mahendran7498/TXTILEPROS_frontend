@@ -1,6 +1,7 @@
 // ── ABOUT PAGE ──────────────────────────────────────────────────────────────
 import { motion as Motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import teamTrainingPhoto from '../assets/team-training-session.jpeg'
 
 function PageHero({ title, subtitle, crumb }) {
   return (
@@ -23,10 +24,10 @@ export function About() {
   const timeline = [
     { year: '2014', event: 'TXTILPROS founded in Coimbatore, Tamil Nadu' },
     { year: '2015', event: 'Became authorized Red Flag Air Jet Loom dealer' },
-    { year: '2017', event: 'Crossed 50 loom installations across Tamil Nadu' },
-    {/* year: '2019', event: 'Expanded operations into Karnataka'*/ },
+    { year: '2017', event: 'Crossed 200+ loom installations across Tamil Nadu' },
+    {year: '2019', event: 'Expanded operations into Karnataka' },
     { year: '2021', event: 'Launched dedicated AMC service contracts' },
-    { year: '2023', event: 'Crossed 200+ Air Jet Loom installations milestone' },
+    { year: '2023', event: 'Crossed 1200+ Air Jet Loom installations milestone' },
   ]
   const team = [
     { role: 'Managing Director', exp: '20+ yrs', spec: 'Textile Machinery' },
@@ -307,11 +308,14 @@ export function Gallery() {
     { cat: 'installation', label: 'Machine Installation', bg: 'linear-gradient(135deg,#f47320,#0a1628)', icon: '🔧' },
     { cat: 'factory', label: 'Weaving Factory Floor', bg: 'linear-gradient(135deg,#0f2044,#243d6e)', icon: '🏗️', tall: true },
     { cat: 'machines', label: 'Loom Control Panel', bg: 'linear-gradient(135deg,#0a1628,#1e4fa0)', icon: '🖥️' },
+    { cat: 'team', label: 'Team Training Session', src: teamTrainingPhoto, wide: true },
+    { cat: 'team', label: 'Service Engineer', bg: 'linear-gradient(135deg,#1e4fa0,#f47320)', icon: '👷' },
     { cat: 'team', label: 'Service Engineer', bg: 'linear-gradient(135deg,#1e4fa0,#f47320)', icon: '👷' },
     { cat: 'installation', label: 'Commissioning Process', bg: 'linear-gradient(135deg,#243d6e,#0a1628)', icon: '⚙️' },
     { cat: 'machines', label: 'Electronic Control Board', bg: 'linear-gradient(135deg,#0a1628,#243d6e)', icon: '💡' },
     { cat: 'factory', label: 'Spare Parts Warehouse', bg: 'linear-gradient(135deg,#f47320,#1a3a6b)', icon: '📦' },
     { cat: 'team', label: 'Team Training Session', bg: 'linear-gradient(135deg,#1a3a6b,#0f2044)', icon: '📚' },
+    { cat: 'team', label: 'Service Engineer', bg: 'linear-gradient(135deg,#1e4fa0,#f47320)', icon: '👷' },
     { cat: 'installation', label: 'Site Preparation', bg: 'linear-gradient(135deg,#0f2044,#f47320)', icon: '🏗️' },
     { cat: 'machines', label: 'Reed Assembly', bg: 'linear-gradient(135deg,#1e4fa0,#0a1628)', icon: '🔩' },
     { cat: 'factory', label: 'Production in Progress', bg: 'linear-gradient(135deg,#243d6e,#1e4fa0)', icon: '🧵' },
@@ -336,9 +340,13 @@ export function Gallery() {
                 style={{ gridColumn: item.wide ? 'span 2' : 'span 1', gridRow: item.tall ? 'span 2' : 'span 1', borderRadius: 12, overflow: 'hidden', position: 'relative', cursor: 'pointer', background: item.bg }}
                 className="gallery-cell"
               >
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, transition: 'transform 0.3s' }} className="gallery-inner">
-                  {item.icon}
-                </div>
+                {item.src ? (
+                  <img src={item.src} alt={item.label} className="gallery-inner" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.3s' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 48, transition: 'transform 0.3s' }} className="gallery-inner">
+                    {item.icon}
+                  </div>
+                )}
                 <div className="gal-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,22,40,0.8),transparent)', opacity: 0, display: 'flex', alignItems: 'flex-end', padding: 16, transition: 'opacity 0.3s' }}>
                   <span style={{ color: 'white', fontSize: 13, fontWeight: 600 }}>{item.label}</span>
                 </div>
