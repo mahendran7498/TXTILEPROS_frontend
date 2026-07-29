@@ -105,17 +105,19 @@ export default function Home() {
           {/* Hero visual */}
           <Motion.div initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }} className="hero-visual">
             <div style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: 32, backdropFilter: 'blur(12px)' }}>
-              <div style={{ width: '100%', height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 200 200" fill="none" style={{ width: 180, height: 180 }}>
-                  <rect x="20" y="20" width="160" height="140" rx="8" stroke="rgba(244,115,32,0.4)" strokeWidth="2" fill="none"/>
-                  {[40,60,80,100,120,140,160].map(x => <line key={x} x1={x} y1="30" x2={x} y2="150" stroke="rgba(244,115,32,0.3)" strokeWidth="1"/>)}
-                  <path d="M30 60 Q45 55 60 60 Q75 65 90 60 Q105 55 120 60 Q135 65 150 60 Q165 55 170 60" stroke="white" strokeWidth="1.5" fill="none" strokeOpacity="0.5"/>
-                  <path d="M30 80 Q45 85 60 80 Q75 75 90 80 Q105 85 120 80 Q135 75 150 80 Q165 85 170 80" stroke="white" strokeWidth="1.5" fill="none" strokeOpacity="0.5"/>
-                  <path d="M30 100 Q45 95 60 100 Q75 105 90 100 Q105 95 120 100 Q135 105 150 100 Q165 95 170 100" stroke="white" strokeWidth="1.5" fill="none" strokeOpacity="0.5"/>
-                  <path d="M30 120 Q45 125 60 120 Q75 115 90 120 Q105 125 120 120 Q135 115 150 120 Q165 125 170 120" stroke="white" strokeWidth="1.5" fill="none" strokeOpacity="0.5"/>
-                  <rect x="55" y="88" width="90" height="14" rx="7" fill="rgba(244,115,32,0.8)"/>
-                  <rect x="15" y="155" width="170" height="20" rx="6" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
-                </svg>
+              <div style={{ width: '100%', height: 240, overflow: 'hidden', borderRadius: 10, background: 'rgba(0,0,0,0.25)', marginBottom: 24 }}>
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  aria-label="Red Flag Air Jet Loom in operation"
+                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                >
+                  <source src="/videos/red-flag-air-jet-loom.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
               </div>
               <h3 style={{ fontFamily: 'var(--font-head)', fontSize: 26, color: 'white', letterSpacing: 2 }}>RED FLAG AIR JET LOOM</h3>
               <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>High-performance weaving solutions for modern textile mills</p>

@@ -49,8 +49,6 @@ export default function AdminEmployeesSection({ users, form, setForm, saving, on
               <span>Role</span>
               <select value={form.role} onChange={(event) => handleRoleChange(event.target.value)}>
                 <option value="employee">Employee</option>
-                <option value="admin">Admin</option>
-                <option value="owner">Owner</option>
                 <option value="manager">Manager</option>
               </select>
             </label>
