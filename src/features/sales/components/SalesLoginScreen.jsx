@@ -36,6 +36,7 @@ export default function SalesLoginScreen({ credentials, loading, setCredentials,
               placeholder="Enter your password"
             />
           </label>
+          <Link className="login-help-link" to="/forgot-password">Forgot your password?</Link>
           <button className="primary-button" disabled={loading} type="submit">
             {loading ? 'Signing in...' : 'Login to sales dashboard'}
           </button>

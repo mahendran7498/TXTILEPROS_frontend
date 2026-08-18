@@ -395,6 +395,15 @@ a {
 .secondary-button:disabled,
 .ghost-button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+.login-help-link {
+  align-self: flex-start;
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-help-link:hover { text-decoration: underline; }
+
 .stat-grid,
 .content-grid,
 .report-grid,

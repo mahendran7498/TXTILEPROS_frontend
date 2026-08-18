@@ -37,6 +37,7 @@ export default function LoginScreen({ credentials, loading, setCredentials, onSu
               placeholder="Enter your password"
             />
           </label>
+          <Link className="login-help-link" to="/forgot-password">Forgot your password?</Link>
           <button className="primary-button" disabled={loading} type="submit">
             {loading ? 'Signing in...' : 'Login to dashboard'}
           </button>

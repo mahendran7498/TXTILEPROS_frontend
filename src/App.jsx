@@ -7,6 +7,7 @@ import Contact from './pages/Contact'
 import ReportingPortal from './pages/ReportingPortal'
 import SalesPortal from './pages/SalesPortal'
 import OwnerDashboard from './pages/OwnerDashboard'
+import { ForgotPassword, ResetPassword } from './pages/PasswordReset'
 import { About, Blog, Gallery, Products, Projects, Services } from './pages/OtherPages'
 
 function MarketingLayout() {
@@ -34,6 +35,8 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/login" element={<ReportingPortal />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/owner/dashboard" element={<OwnerDashboard />} />
       <Route path="/dashboard" element={<ReportingPortal />} />
       <Route path="/dashboard/attendance" element={<ReportingPortal />} />
