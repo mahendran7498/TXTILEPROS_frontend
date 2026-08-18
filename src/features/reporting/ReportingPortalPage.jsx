@@ -36,6 +36,7 @@ export default function ReportingPortalPage() {
     form,
     editingReportId,
     handleLeaveDecision,
+    handleLeaveEdit,
     handleEditReport,
     handleLogin,
     handleLogout,
@@ -135,6 +136,7 @@ export default function ReportingPortalPage() {
               editSalaryForm={editSalaryForm}
               handleContactStatusUpdate={handleContactStatusUpdate}
               handleLeaveDecision={handleLeaveDecision}
+              handleLeaveEdit={handleLeaveEdit}
               handleSalaryApprove={handleSalaryApprove}
               handleSalaryDownload={handleSalaryDownload}
               handleSalaryEditChange={handleSalaryEditChange}

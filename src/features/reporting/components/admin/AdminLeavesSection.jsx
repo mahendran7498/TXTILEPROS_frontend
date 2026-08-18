@@ -13,6 +13,13 @@ function formatLeaveRange(leave) {
   return start === end ? start : `${start} - ${end}`
 }
 
+function toDateInput(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60 * 1000)
+  return offsetDate.toISOString().slice(0, 10)
+}
+
 function LeaveActionForm({ leave, loading, onDecision }) {
   const [comment, setComment] = useState(leave.adminComment || '')
 
@@ -39,9 +46,44 @@ function LeaveActionForm({ leave, loading, onDecision }) {
   )
 }
 
-export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDecision }) {
+function LeaveEditForm({ leave, loading, onCancel, onSave }) {
+  const [form, setForm] = useState({
+    fromDate: toDateInput(leave.fromDate || leave.leaveDate),
+    toDate: toDateInput(leave.toDate || leave.leaveDate || leave.fromDate),
+    reason: leave.reason || '',
+    paidLeaveDays: leave.paidLeaveDays ?? leave.requestedPaidLeaveDays ?? 0,
+    adminComment: leave.adminComment || '',
+  })
+
+  function updateField(field, value) {
+    setForm((current) => ({ ...current, [field]: value }))
+  }
+
+  return (
+    <form className="leave-action-box" onSubmit={(event) => {
+      event.preventDefault()
+      onSave(leave._id, { ...form, paidLeaveDays: Number(form.paidLeaveDays) })
+    }}>
+      <div className="report-grid">
+        <label className="field"><span>From date</span><input required type="date" value={form.fromDate} onChange={(event) => updateField('fromDate', event.target.value)} /></label>
+        <label className="field"><span>To date</span><input required type="date" value={form.toDate} onChange={(event) => updateField('toDate', event.target.value)} /></label>
+        <label className="field"><span>Paid leave days charged</span><input min="0" required step="1" type="number" value={form.paidLeaveDays} onChange={(event) => updateField('paidLeaveDays', event.target.value)} /></label>
+        <label className="field field-wide"><span>Reason</span><textarea required rows="2" value={form.reason} onChange={(event) => updateField('reason', event.target.value)} /></label>
+        <label className="field field-wide"><span>Admin note</span><textarea rows="2" value={form.adminComment} onChange={(event) => updateField('adminComment', event.target.value)} /></label>
+      </div>
+      <p className="muted">Set paid leave days to 0 for an unpaid leave. The employee's remaining balance is recalculated from the 15-day annual allocation.</p>
+      <div className="leave-action-buttons">
+        <button className="primary-button inline-button" disabled={loading} type="submit">{loading ? 'Saving...' : 'Save changes'}</button>
+        <button className="ghost-button inline-button" disabled={loading} type="button" onClick={onCancel}>Cancel</button>
+      </div>
+    </form>
+  )
+}
+
+export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDecision, onEdit }) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [editingLeaveId, setEditingLeaveId] = useState('')
 
   const filteredLeaves = useMemo(() => {
     if (statusFilter === 'all') return leaves
@@ -119,8 +161,25 @@ export default function AdminLeavesSection({ leaves, leaveActionLoadingId, onDec
 
                   <p><strong>Reason:</strong> {leave.reason}</p>
 
-                  {leave.status === 'pending' ? (
-                    <LeaveActionForm leave={leave} loading={isLoading} onDecision={onDecision} />
+                  {['pending', 'approved'].includes(leave.status) ? (
+                    editingLeaveId === leave._id ? (
+                      <LeaveEditForm
+                        key={leave._id}
+                        leave={leave}
+                        loading={isLoading}
+                        onCancel={() => setEditingLeaveId('')}
+                        onSave={async (leaveId, values) => {
+                          if (await onEdit(leaveId, values)) setEditingLeaveId('')
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <div className="leave-action-buttons">
+                          <button className="ghost-button inline-button" disabled={isLoading} type="button" onClick={() => setEditingLeaveId(leave._id)}>Edit leave</button>
+                        </div>
+                        {leave.status === 'pending' ? <LeaveActionForm leave={leave} loading={isLoading} onDecision={onDecision} /> : null}
+                      </>
+                    )
                   ) : (
                     <div className="leave-decision-note">
                       <p className="muted">

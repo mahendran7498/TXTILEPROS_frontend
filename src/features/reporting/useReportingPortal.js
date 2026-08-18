@@ -366,6 +366,22 @@ export default function useReportingPortal() {
     }
   }
 
+  async function handleLeaveEdit(leaveId, updates) {
+    setLeaveActionLoadingId(leaveId)
+
+    try {
+      await apiRequest(`/admin/leaves/${leaveId}`, { method: 'PATCH', body: updates }, token)
+      toast.success('Leave request updated')
+      await refreshDashboard()
+      return true
+    } catch (error) {
+      toast.error(error.message)
+      return false
+    } finally {
+      setLeaveActionLoadingId('')
+    }
+  }
+
   async function handleContactStatusUpdate(contactId, status) {
     setMessageStatusUpdatingId(contactId)
 
@@ -511,6 +527,7 @@ export default function useReportingPortal() {
     form,
     editingReportId,
     handleLeaveDecision,
+    handleLeaveEdit,
     handleEditReport,
     handleLogin,
     handleLogout,

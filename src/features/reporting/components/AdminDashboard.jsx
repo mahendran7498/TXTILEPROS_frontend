@@ -20,6 +20,7 @@ export default function AdminDashboard({
   dashboard,
   editSalaryForm,
   handleLeaveDecision,
+  handleLeaveEdit,
   handleContactStatusUpdate,
   handleSalaryApprove,
   handleSalaryDownload,
@@ -60,7 +61,7 @@ export default function AdminDashboard({
         <AdminAttendanceSection attendance={attendance} attendanceMonth={attendanceMonth} setAttendanceMonth={setAttendanceMonth} />
       ) : null}
       {activePath === `${basePath}/leaves` ? (
-        <AdminLeavesSection leaveActionLoadingId={leaveActionLoadingId} leaves={leaves} onDecision={handleLeaveDecision} />
+        <AdminLeavesSection leaveActionLoadingId={leaveActionLoadingId} leaves={leaves} onDecision={handleLeaveDecision} onEdit={handleLeaveEdit} />
       ) : null}
       {canViewSalaries && activePath === `${basePath}/salaries` ? (
         <AdminSalariesSection
